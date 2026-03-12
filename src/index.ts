@@ -5,6 +5,12 @@ import { doctor } from "./commands/doctor";
 import { add } from "./commands/add";
 import { list } from "./commands/list";
 import { inspect } from "./commands/inspect";
+import { audit } from "./commands/audit";
+import { repair } from "./commands/repair";
+import { context } from "./commands/context";
+import { explain } from "./commands/explain";
+import { trace } from "./commands/trace";
+import { conform } from "./commands/conform";
 import { log } from "./utils/logger";
 
 const VERSION = "0.1.0";
@@ -15,6 +21,12 @@ const COMMANDS: Record<string, (args: string[]) => Promise<void>> = {
   add,
   list,
   inspect,
+  audit,
+  repair,
+  context,
+  explain,
+  trace,
+  conform,
 };
 
 function printHelp() {
@@ -30,6 +42,12 @@ function printHelp() {
     ["add", "Add components to the project"],
     ["list", "Show installed and available components"],
     ["inspect", "Show component manifest details"],
+    ["audit", "Validate components against manifests"],
+    ["repair", "Auto-fix audit issues"],
+    ["context", "Generate AI context file"],
+    ["explain", "Human/agent-readable component explanation"],
+    ["trace", "Show dependency and file trace"],
+    ["conform", "Normalize component markup"],
     ["doctor", "Check project health"],
     ["help", "Show this help message"],
     ["version", "Show version"],
