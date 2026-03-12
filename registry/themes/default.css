@@ -1,0 +1,79 @@
+/* @ui:component theme-default */
+
+:root {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: var(--palette-gray-950);
+  --color-bg-subtle: var(--palette-gray-900);
+  --color-bg-muted: var(--palette-gray-800);
+  --color-bg-elevated: var(--palette-gray-900);
+  --color-fg: var(--palette-gray-50);
+  --color-fg-muted: var(--palette-gray-400);
+  --color-fg-subtle: var(--palette-gray-500);
+  --color-link: var(--palette-blue-300);
+
+  --color-primary: var(--palette-indigo-400);
+  --color-primary-hover: var(--palette-indigo-300);
+  --color-primary-active: var(--palette-indigo-200);
+  --color-primary-subtle: oklch(0.55 0.22 264 / 0.15);
+
+  --color-secondary: var(--palette-gray-800);
+  --color-secondary-hover: var(--palette-gray-700);
+  --color-secondary-active: var(--palette-gray-600);
+  --color-secondary-fg: var(--palette-gray-100);
+
+  --color-destructive: var(--palette-red-400);
+  --color-destructive-hover: var(--palette-red-300);
+  --color-destructive-fg: var(--palette-gray-950);
+
+  --color-success: var(--palette-green-400);
+  --color-warning: var(--palette-amber-400);
+
+  --color-border: var(--palette-gray-800);
+  --color-border-strong: var(--palette-gray-700);
+  --color-overlay: oklch(0 0 0 / 0.72);
+
+  --shadow-xs: none;
+  --shadow-sm: 0 1px 3px oklch(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px oklch(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 15px oklch(0 0 0 / 0.4);
+  --shadow-xl: 0 20px 25px oklch(0 0 0 / 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-bg: var(--palette-gray-950);
+    --color-bg-subtle: var(--palette-gray-900);
+    --color-bg-muted: var(--palette-gray-800);
+    --color-bg-elevated: var(--palette-gray-900);
+    --color-fg: var(--palette-gray-50);
+    --color-fg-muted: var(--palette-gray-400);
+    --color-fg-subtle: var(--palette-gray-500);
+    --color-link: var(--palette-blue-300);
+    --color-primary: var(--palette-indigo-400);
+    --color-primary-hover: var(--palette-indigo-300);
+    --color-primary-active: var(--palette-indigo-200);
+    --color-primary-subtle: oklch(0.55 0.22 264 / 0.15);
+    --color-secondary: var(--palette-gray-800);
+    --color-secondary-hover: var(--palette-gray-700);
+    --color-secondary-active: var(--palette-gray-600);
+    --color-secondary-fg: var(--palette-gray-100);
+    --color-destructive: var(--palette-red-400);
+    --color-destructive-hover: var(--palette-red-300);
+    --color-destructive-fg: var(--palette-gray-950);
+    --color-success: var(--palette-green-400);
+    --color-warning: var(--palette-amber-400);
+    --color-border: var(--palette-gray-800);
+    --color-border-strong: var(--palette-gray-700);
+    --color-overlay: oklch(0 0 0 / 0.72);
+    --shadow-xs: none;
+    --shadow-sm: 0 1px 3px oklch(0 0 0 / 0.3);
+    --shadow-md: 0 4px 6px oklch(0 0 0 / 0.3);
+    --shadow-lg: 0 10px 15px oklch(0 0 0 / 0.4);
+    --shadow-xl: 0 20px 25px oklch(0 0 0 / 0.5);
+  }
+}

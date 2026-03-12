@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loom.dev/schemas/loom.config.schema.json",
+  "title": "Loom Project Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "theme",
+    "output_dir",
+    "tokens_split",
+    "include_core",
+    "installed"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "theme": {
+      "type": "string",
+      "minLength": 1
+    },
+    "output_dir": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tokens_split": {
+      "type": "boolean"
+    },
+    "include_core": {
+      "type": "boolean"
+    },
+    "installed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primitives", "recipes", "patterns"],
+      "properties": {
+        "primitives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recipes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "patterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

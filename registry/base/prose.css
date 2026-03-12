@@ -1,0 +1,54 @@
+/* @ui:component base-prose */
+
+:root {
+  color: var(--color-fg);
+  background: var(--color-bg);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
+
+:where(h1, h2, h3, h4, h5, h6) {
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--text-4xl);
+}
+
+h2 {
+  font-size: var(--text-3xl);
+}
+
+h3 {
+  font-size: var(--text-2xl);
+}
+
+:where(p, ul, ol, blockquote, pre) {
+  max-width: 68ch;
+}
+
+p + p,
+ul + p,
+ol + p,
+p + ul,
+p + ol {
+  margin-top: var(--space-4);
+}
+
+code,
+pre,
+kbd {
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background: var(--color-primary-subtle);
+}

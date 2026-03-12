@@ -1,0 +1,26 @@
+/* @ui:component tokens-aliases */
+
+:root {
+  --button-radius: var(--radius-md);
+  --button-height-sm: 2rem;
+  --button-height-md: 2.5rem;
+  --button-height-lg: 3rem;
+  --button-font: var(--font-sans);
+  --button-weight: var(--weight-medium);
+
+  --input-height: 2.5rem;
+  --input-radius: var(--radius-md);
+  --input-border: var(--color-border);
+
+  --card-radius: var(--radius-lg);
+  --card-shadow: var(--shadow-sm);
+  --card-border: var(--color-border);
+  --card-bg: var(--color-bg-elevated);
+
+  --dialog-radius: var(--radius-xl);
+  --dialog-shadow: var(--shadow-xl);
+  --dialog-overlay-bg: var(--color-overlay);
+
+  --surface-radius: var(--radius-lg);
+  --surface-shadow: var(--shadow-md);
+}
