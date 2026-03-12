@@ -1,0 +1,1122 @@
+{
+  "meta": {
+    "framework": "loom",
+    "version": "1.0.0",
+    "theme": "default",
+    "generated_at": "2026-03-12T11:07:55.460Z",
+    "component_count": {
+      "primitives": 17,
+      "recipes": 15,
+      "patterns": 6
+    }
+  },
+  "protocol": {
+    "identity": "data-ui",
+    "part": "data-part",
+    "state": "data-state",
+    "variant": "data-variant",
+    "size": "data-size",
+    "css_target": "[data-ui='name']",
+    "state_css": "[data-state='value']",
+    "theme_attr": "data-theme on <html>"
+  },
+  "tokens": {
+    "prefix": "--",
+    "spacing": "4px base (--space-1 through --space-24)",
+    "radius": {
+      "sm": "4px",
+      "md": "6px",
+      "lg": "8px",
+      "xl": "12px"
+    },
+    "shadows": "xs, sm, md, lg, xl",
+    "z_index": "dropdown:50, sticky:100, overlay:200, modal:300, toast:400"
+  },
+  "components": {
+    "accordion": {
+      "kind": "recipe",
+      "category": "navigation",
+      "description": "Expandable sections with single or multiple-open modes",
+      "selector": "[data-ui='accordion']",
+      "slots": [
+        "item",
+        "trigger",
+        "panel"
+      ],
+      "variants": {
+        "mode": {
+          "values": [
+            "single",
+            "multiple"
+          ],
+          "default": "single",
+          "attr": "data-mode"
+        }
+      },
+      "states": [
+        "ready"
+      ],
+      "template": "<div data-ui=\"accordion\" data-state=\"ready\" data-mode=\"single\">\n  <section data-part=\"item\" data-state=\"open\">\n    <button data-part=\"trigger\" type=\"button\" aria-expanded=\"true\" aria-controls=\"faq-1\">{title}</button>\n    <div data-part=\"panel\" id=\"faq-1\">{content}</div>\n  </section>\n</div>",
+      "safe_transforms": [
+        "add-item",
+        "remove-item",
+        "change-mode",
+        "replace-panel-content"
+      ],
+      "controller": "accordion.js"
+    },
+    "auth-form": {
+      "kind": "pattern",
+      "category": "composite",
+      "description": "Centered authentication form composition with card framing and primary actions",
+      "selector": "[data-ui='auth-form']",
+      "slots": [
+        "panel",
+        "header",
+        "form",
+        "actions"
+      ],
+      "template": "<section data-ui=\"auth-form\"><article data-ui=\"card\" data-part=\"panel\">{content}</article></section>",
+      "safe_transforms": [
+        "replace-copy",
+        "add-form-field",
+        "swap-primary-action",
+        "change-supporting-links"
+      ]
+    },
+    "avatar": {
+      "kind": "primitive",
+      "category": "data-display",
+      "description": "Circular user avatar with image and text fallback slots",
+      "selector": "[data-ui='avatar']",
+      "slots": [
+        "image",
+        "fallback"
+      ],
+      "variants": {
+        "size": {
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "attr": "data-size"
+        }
+      },
+      "states": [
+        "default"
+      ],
+      "template": "<div data-ui=\"avatar\" data-size=\"{size}\"><img data-part=\"image\" src=\"{src}\" alt=\"{alt}\" /></div>",
+      "safe_transforms": [
+        "change-size",
+        "swap-image-source",
+        "replace-image-with-fallback"
+      ]
+    },
+    "badge": {
+      "kind": "primitive",
+      "category": "feedback",
+      "description": "Compact status pill for counts, labels, and semantic state",
+      "selector": "[data-ui='badge']",
+      "variants": {
+        "visual": {
+          "values": [
+            "default",
+            "primary",
+            "success",
+            "warning",
+            "danger"
+          ],
+          "default": "default",
+          "attr": "data-variant"
+        },
+        "size": {
+          "values": [
+            "sm",
+            "lg"
+          ],
+          "default": "sm",
+          "attr": "data-size"
+        }
+      },
+      "states": [
+        "default"
+      ],
+      "template": "<span data-ui=\"badge\" data-variant=\"{variant}\">{text}</span>",
+      "safe_transforms": [
+        "change-variant",
+        "change-size",
+        "change-text-content"
+      ]
+    },
+    "button": {
+      "kind": "primitive",
+      "category": "actions",
+      "description": "Interactive button with visual variants and size options",
+      "selector": "[data-ui='button']",
+      "slots": [
+        "icon"
+      ],
+      "variants": {
+        "visual": {
+          "values": [
+            "default",
+            "primary",
+            "secondary",
+            "destructive",
+            "ghost",
+            "outline",
+            "link"
+          ],
+          "default": "default",
+          "attr": "data-variant"
+        },
+        "size": {
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "attr": "data-size"
+        }
+      },
+      "states": [
+        "default",
+        "loading",
+        "disabled"
+      ],
+      "template": "<button data-ui=\"button\" data-variant=\"{variant}\" data-size=\"{size}\">{text}</button>",
+      "safe_transforms": [
+        "change-variant",
+        "change-size",
+        "add-icon",
+        "change-text-content",
+        "toggle-disabled-state"
+      ]
+    },
+    "card": {
+      "kind": "primitive",
+      "category": "layout",
+      "description": "Elevated container with optional header, body, and footer regions",
+      "selector": "[data-ui='card']",
+      "slots": [
+        "header",
+        "title",
+        "description",
+        "body",
+        "footer"
+      ],
+      "variants": {
+        "visual": {
+          "values": [
+            "default",
+            "subtle",
+            "interactive"
+          ],
+          "default": "default",
+          "attr": "data-variant"
+        }
+      },
+      "states": [
+        "default"
+      ],
+      "template": "<article data-ui=\"card\"><div data-part=\"body\">{content}</div></article>",
+      "safe_transforms": [
+        "add-header",
+        "add-footer",
+        "change-variant",
+        "replace-body-content"
+      ]
+    },
+    "checkbox": {
+      "kind": "primitive",
+      "category": "forms",
+      "description": "Checkbox input with token-based accent and focus styling",
+      "selector": "[data-ui='checkbox']",
+      "states": [
+        "unchecked",
+        "checked",
+        "disabled"
+      ],
+      "template": "<input data-ui=\"checkbox\" type=\"checkbox\" aria-label=\"{label}\" />",
+      "safe_transforms": [
+        "toggle-checked-state",
+        "toggle-disabled-state",
+        "associate-label"
+      ]
+    },
+    "combobox": {
+      "kind": "recipe",
+      "category": "forms",
+      "description": "Input with filtered option list for autocomplete workflows",
+      "selector": "[data-ui='combobox']",
+      "slots": [
+        "input",
+        "list",
+        "option"
+      ],
+      "states": [
+        "closed",
+        "open"
+      ],
+      "template": "<div data-ui=\"combobox\" data-state=\"closed\" id=\"{id}\">\n  <input data-ui=\"input\" data-part=\"input\" role=\"combobox\" aria-expanded=\"false\" aria-controls=\"{id}-list\" />\n  <div data-part=\"list\" id=\"{id}-list\" role=\"listbox\" hidden>\n    <button data-part=\"option\" type=\"button\" role=\"option\">{option}</button>\n  </div>\n</div>",
+      "safe_transforms": [
+        "change-options",
+        "change-placeholder",
+        "customize-empty-state"
+      ],
+      "controller": "combobox.js"
+    },
+    "command-palette": {
+      "kind": "recipe",
+      "category": "overlay",
+      "description": "Modal command launcher with search filtering and keyboard shortcut support",
+      "selector": "[data-ui='command-palette']",
+      "slots": [
+        "trigger",
+        "overlay",
+        "panel",
+        "header",
+        "title",
+        "input",
+        "list",
+        "item",
+        "close"
+      ],
+      "states": [
+        "closed",
+        "open",
+        "closing"
+      ],
+      "a11y": "role=dialog, aria-modal=true, focus-trap, escape-closes, return-focus→trigger",
+      "template": "<div data-ui=\"command-palette\" data-state=\"closed\" id=\"{id}\">\n  <div data-part=\"overlay\" hidden></div>\n  <div data-part=\"panel\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"{id}-title\" hidden tabindex=\"-1\">\n    <div data-part=\"header\">\n      <h2 id=\"{id}-title\" data-part=\"title\">{title}</h2>\n      <button data-part=\"close\" type=\"button\" aria-label=\"Close command palette\">Close</button>\n    </div>\n    <input data-ui=\"input\" data-part=\"input\" type=\"text\" />\n    <div data-part=\"list\" role=\"listbox\">\n      <button data-part=\"item\" type=\"button\">{command}</button>\n    </div>\n  </div>\n</div>",
+      "safe_transforms": [
+        "change-command-list",
+        "change-placeholder",
+        "customize-empty-state"
+      ],
+      "controller": "command-palette.js"
+    },
+    "crud-table": {
+      "kind": "pattern",
+      "category": "composite",
+      "description": "Data management pattern with search, bulk actions, table controls, and destructive confirmation",
+      "selector": "[data-ui='crud-table']",
+      "slots": [
+        "header",
+        "table-card",
+        "footer"
+      ],
+      "template": "<section data-ui=\"crud-table\"><header data-part=\"header\">{toolbar}</header><article data-part=\"table-card\">{table}</article></section>",
+      "safe_transforms": [
+        "add-table-column",
+        "change-bulk-actions",
+        "update-empty-copy",
+        "replace-dialog-copy"
+      ]
+    },
+    "dashboard-shell": {
+      "kind": "pattern",
+      "category": "composite",
+      "description": "Application shell pattern with topbar, sidebar navigation, metrics, and tabbed content",
+      "selector": "[data-ui='dashboard-shell']",
+      "slots": [
+        "topbar",
+        "sidebar",
+        "content"
+      ],
+      "template": "<section data-ui=\"dashboard-shell\"><div data-part=\"topbar\">{header}</div><div data-part=\"content\">{content}</div></section>",
+      "safe_transforms": [
+        "replace-nav-links",
+        "add-metric-card",
+        "change-topbar-actions",
+        "swap-tab-panels"
+      ]
+    },
+    "date-picker": {
+      "kind": "recipe",
+      "category": "forms",
+      "description": "Input-driven date picker with inline calendar popover",
+      "selector": "[data-ui='date-picker']",
+      "slots": [
+        "input",
+        "trigger",
+        "calendar",
+        "month",
+        "grid",
+        "day"
+      ],
+      "states": [
+        "closed",
+        "open"
+      ],
+      "template": "<div data-ui=\"date-picker\" data-state=\"closed\" id=\"{id}\">\n  <input data-ui=\"input\" data-part=\"input\" type=\"text\" />\n  <button data-ui=\"button\" data-part=\"trigger\" type=\"button\" aria-expanded=\"false\" aria-controls=\"{id}-calendar\">Open calendar</button>\n  <div data-part=\"calendar\" id=\"{id}-calendar\" hidden>\n    <div data-part=\"month\">March 2026</div>\n    <div data-part=\"grid\">\n      <button data-part=\"day\" type=\"button\" data-date=\"2026-03-12\">12</button>\n    </div>\n  </div>\n</div>",
+      "safe_transforms": [
+        "change-visible-days",
+        "change-date-format",
+        "change-placeholder"
+      ],
+      "controller": "date-picker.js"
+    },
+    "dialog": {
+      "kind": "recipe",
+      "category": "overlay",
+      "description": "Modal dialog with overlay backdrop, focus trap, and escape-to-close handling",
+      "selector": "[data-ui='dialog']",
+      "slots": [
+        "trigger",
+        "overlay",
+        "panel",
+        "header",
+        "title",
+        "description",
+        "body",
+        "footer",
+        "close"
+      ],
+      "variants": {
+        "size": {
+          "values": [
+            "sm",
+            "md",
+            "lg",
+            "full"
+          ],
+          "default": "md",
+          "attr": "data-size"
+        }
+      },
+      "states": [
+        "closed",
+        "open",
+        "closing"
+      ],
+      "a11y": "role=dialog, aria-modal=true, focus-trap, escape-closes, return-focus→trigger",
+      "template": "<div data-ui=\"dialog\" data-state=\"closed\" id=\"{id}\">\n  <button data-ui=\"button\" data-part=\"trigger\" data-variant=\"primary\" type=\"button\">{trigger_text}</button>\n  <div data-part=\"overlay\" hidden></div>\n  <div data-part=\"panel\" id=\"{id}-panel\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"{id}-title\" aria-describedby=\"{id}-description\" data-size=\"md\" hidden tabindex=\"-1\">\n    <div data-part=\"header\">\n      <div>\n        <h2 id=\"{id}-title\" data-part=\"title\">{title}</h2>\n        <p id=\"{id}-description\" data-part=\"description\">{description}</p>\n      </div>\n      <button data-part=\"close\" type=\"button\" aria-label=\"Close dialog\">Close</button>\n    </div>\n    <div data-part=\"body\">{body}</div>\n    <div data-part=\"footer\">\n      <button data-ui=\"button\" data-part=\"close\" data-variant=\"secondary\" type=\"button\" aria-label=\"Close dialog\">Cancel</button>\n      <button data-ui=\"button\" data-variant=\"primary\" type=\"button\">Continue</button>\n    </div>\n  </div>\n</div>",
+      "safe_transforms": [
+        "change-size",
+        "replace-body-content",
+        "customize-overlay-opacity",
+        "customize-footer-actions",
+        "add-form-fields"
+      ],
+      "controller": "dialog.js"
+    },
+    "drawer": {
+      "kind": "recipe",
+      "category": "overlay",
+      "description": "Side drawer with overlay backdrop, focus trap, and edge variants",
+      "selector": "[data-ui='drawer']",
+      "slots": [
+        "trigger",
+        "overlay",
+        "panel",
+        "header",
+        "title",
+        "description",
+        "body",
+        "footer",
+        "close"
+      ],
+      "variants": {
+        "side": {
+          "values": [
+            "left",
+            "right"
+          ],
+          "default": "right",
+          "attr": "data-side"
+        }
+      },
+      "states": [
+        "closed",
+        "open",
+        "closing"
+      ],
+      "a11y": "role=dialog, aria-modal=true, focus-trap, escape-closes, return-focus→trigger",
+      "template": "<div data-ui=\"drawer\" data-state=\"closed\" id=\"{id}\">\n  <button data-ui=\"button\" data-part=\"trigger\" data-variant=\"secondary\" type=\"button\">Open drawer</button>\n  <div data-part=\"overlay\" hidden></div>\n  <aside data-part=\"panel\" data-side=\"right\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"{id}-title\" hidden tabindex=\"-1\">\n    <div data-part=\"header\">\n      <div>\n        <h2 id=\"{id}-title\" data-part=\"title\">{title}</h2>\n        <p id=\"{id}-description\" data-part=\"description\">{description}</p>\n      </div>\n      <button data-part=\"close\" type=\"button\" aria-label=\"Close drawer\">Close</button>\n    </div>\n    <div data-part=\"body\">{body}</div>\n  </aside>\n</div>",
+      "safe_transforms": [
+        "change-side",
+        "replace-body-content",
+        "customize-footer-actions"
+      ],
+      "controller": "drawer.js"
+    },
+    "dropdown": {
+      "kind": "recipe",
+      "category": "navigation",
+      "description": "Menu dropdown with outside-click dismissal and keyboard navigation between actions",
+      "selector": "[data-ui='dropdown']",
+      "slots": [
+        "trigger",
+        "menu",
+        "item"
+      ],
+      "variants": {
+        "align": {
+          "values": [
+            "start",
+            "end"
+          ],
+          "default": "start",
+          "attr": "data-align"
+        }
+      },
+      "states": [
+        "closed",
+        "open"
+      ],
+      "template": "<div data-ui=\"dropdown\" data-state=\"closed\" data-align=\"start\" id=\"{id}\">\n  <button data-ui=\"button\" data-part=\"trigger\" data-variant=\"secondary\" type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-controls=\"{id}-menu\">Actions</button>\n  <div data-part=\"menu\" id=\"{id}-menu\" role=\"menu\" hidden>\n    <button data-part=\"item\" type=\"button\" role=\"menuitem\">Edit profile</button>\n    <button data-part=\"item\" type=\"button\" role=\"menuitem\">Share access</button>\n    <button data-part=\"item\" type=\"button\" role=\"menuitem\">Archive</button>\n  </div>\n</div>",
+      "safe_transforms": [
+        "change-align",
+        "add-menu-item",
+        "remove-menu-item",
+        "replace-item-labels",
+        "customize-surface-styles"
+      ],
+      "controller": "dropdown.js"
+    },
+    "empty-state": {
+      "kind": "pattern",
+      "category": "composite",
+      "description": "Centered empty-state callout with brief explanation and paired next-step actions",
+      "selector": "[data-ui='empty-state']",
+      "slots": [
+        "panel",
+        "actions"
+      ],
+      "template": "<section data-ui=\"empty-state\"><article data-ui=\"card\" data-part=\"panel\">{content}</article></section>",
+      "safe_transforms": [
+        "replace-copy",
+        "swap-primary-action",
+        "add-secondary-action"
+      ]
+    },
+    "grid": {
+      "kind": "primitive",
+      "category": "layout",
+      "description": "Responsive CSS grid helper with tokenized gaps and column counts",
+      "selector": "[data-ui='grid']",
+      "variants": {
+        "columns": {
+          "values": [
+            "2",
+            "3",
+            "4"
+          ],
+          "default": "2",
+          "attr": "data-columns"
+        },
+        "gap": {
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "attr": "data-gap"
+        }
+      },
+      "template": "<div data-ui=\"grid\" data-columns=\"{columns}\" data-gap=\"{gap}\">{children}</div>",
+      "safe_transforms": [
+        "change-column-count",
+        "change-gap",
+        "reorder-children"
+      ]
+    },
+    "input": {
+      "kind": "primitive",
+      "category": "forms",
+      "description": "Single-line text input with size and validation states",
+      "selector": "[data-ui='input']",
+      "variants": {
+        "size": {
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "attr": "data-size"
+        }
+      },
+      "states": [
+        "default",
+        "invalid",
+        "readonly",
+        "disabled"
+      ],
+      "template": "<input data-ui=\"input\" type=\"text\" data-size=\"{size}\" placeholder=\"{placeholder}\" />",
+      "safe_transforms": [
+        "change-input-type",
+        "change-placeholder",
+        "toggle-disabled-state",
+        "toggle-readonly-state",
+        "set-invalid-state"
+      ]
+    },
+    "kbd": {
+      "kind": "primitive",
+      "category": "typography",
+      "description": "Keyboard shortcut token rendered in a compact monospace pill",
+      "selector": "[data-ui='kbd']",
+      "variants": {
+        "size": {
+          "values": [
+            "sm",
+            "md"
+          ],
+          "default": "md",
+          "attr": "data-size"
+        }
+      },
+      "template": "<kbd data-ui=\"kbd\" data-size=\"{size}\">{keys}</kbd>",
+      "safe_transforms": [
+        "change-text-content",
+        "change-size"
+      ]
+    },
+    "label": {
+      "kind": "primitive",
+      "category": "typography",
+      "description": "Form label text with default and muted emphasis levels",
+      "selector": "[data-ui='label']",
+      "variants": {
+        "visual": {
+          "values": [
+            "default",
+            "muted"
+          ],
+          "default": "default",
+          "attr": "data-variant"
+        }
+      },
+      "template": "<label data-ui=\"label\" data-variant=\"{variant}\" for=\"{for}\">{text}</label>",
+      "safe_transforms": [
+        "change-text-content",
+        "change-variant",
+        "update-associated-control"
+      ]
+    },
+    "pagination": {
+      "kind": "recipe",
+      "category": "navigation",
+      "description": "Numbered pagination controls with prev and next navigation state",
+      "selector": "[data-ui='pagination']",
+      "slots": [
+        "prev",
+        "item",
+        "next"
+      ],
+      "states": [
+        "ready"
+      ],
+      "template": "<nav data-ui=\"pagination\" data-state=\"ready\" data-page=\"1\">\n  <button data-part=\"prev\" type=\"button\">Previous</button>\n  <button data-part=\"item\" type=\"button\" aria-current=\"page\">1</button>\n  <button data-part=\"next\" type=\"button\">Next</button>\n</nav>",
+      "safe_transforms": [
+        "add-page",
+        "remove-page",
+        "change-labels"
+      ],
+      "controller": "pagination.js"
+    },
+    "popover": {
+      "kind": "recipe",
+      "category": "overlay",
+      "description": "Anchored popover with click-outside dismissal and close control",
+      "selector": "[data-ui='popover']",
+      "slots": [
+        "trigger",
+        "content",
+        "close"
+      ],
+      "states": [
+        "closed",
+        "open"
+      ],
+      "template": "<div data-ui=\"popover\" data-state=\"closed\" id=\"{id}\">\n  <button data-ui=\"button\" data-part=\"trigger\" type=\"button\" aria-expanded=\"false\" aria-controls=\"{id}-content\">{label}</button>\n  <div data-part=\"content\" id=\"{id}-content\" hidden>{content}</div>\n</div>",
+      "safe_transforms": [
+        "replace-content",
+        "change-alignment-via-custom-css"
+      ],
+      "controller": "popover.js"
+    },
+    "radio": {
+      "kind": "primitive",
+      "category": "forms",
+      "description": "Radio input with token-based accent and focus styling",
+      "selector": "[data-ui='radio']",
+      "states": [
+        "unchecked",
+        "checked",
+        "disabled"
+      ],
+      "template": "<input data-ui=\"radio\" type=\"radio\" name=\"{group}\" aria-label=\"{label}\" />",
+      "safe_transforms": [
+        "toggle-checked-state",
+        "toggle-disabled-state",
+        "change-group-name"
+      ]
+    },
+    "search-results": {
+      "kind": "pattern",
+      "category": "composite",
+      "description": "Search results layout with query input, loading affordance, result cards, and pagination",
+      "selector": "[data-ui='search-results']",
+      "slots": [
+        "header",
+        "results",
+        "footer"
+      ],
+      "template": "<section data-ui=\"search-results\"><header data-part=\"header\">{query}</header><div data-part=\"results\">{results}</div></section>",
+      "safe_transforms": [
+        "replace-result-items",
+        "change-query-placeholder",
+        "adjust-pagination-count"
+      ]
+    },
+    "select": {
+      "kind": "primitive",
+      "category": "forms",
+      "description": "Native select element with token-based styling and validation states",
+      "selector": "[data-ui='select']",
+      "variants": {
+        "size": {
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "attr": "data-size"
+        }
+      },
+      "states": [
+        "default",
+        "invalid",
+        "disabled"
+      ],
+      "template": "<select data-ui=\"select\" data-size=\"{size}\"><option>{placeholder}</option><option>{option_1}</option><option>{option_2}</option></select>",
+      "safe_transforms": [
+        "add-option",
+        "remove-option",
+        "change-size",
+        "set-invalid-state"
+      ]
+    },
+    "select-custom": {
+      "kind": "recipe",
+      "category": "forms",
+      "description": "Custom select built from a trigger and option list with keyboard dismissal",
+      "selector": "[data-ui='select-custom']",
+      "slots": [
+        "trigger",
+        "content",
+        "option"
+      ],
+      "states": [
+        "closed",
+        "open"
+      ],
+      "template": "<div data-ui=\"select-custom\" data-state=\"closed\" id=\"{id}\">\n  <button data-ui=\"button\" data-part=\"trigger\" type=\"button\" aria-expanded=\"false\" aria-controls=\"{id}-content\">{label}</button>\n  <div data-part=\"content\" id=\"{id}-content\" role=\"listbox\" hidden>\n    <button data-part=\"option\" type=\"button\" role=\"option\">{option}</button>\n  </div>\n</div>",
+      "safe_transforms": [
+        "change-options",
+        "change-default-value"
+      ],
+      "controller": "select-custom.js"
+    },
+    "separator": {
+      "kind": "primitive",
+      "category": "layout",
+      "description": "Thin divider for grouping related content horizontally or vertically",
+      "selector": "[data-ui='separator']",
+      "variants": {
+        "orientation": {
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "default": "horizontal",
+          "attr": "data-orientation"
+        }
+      },
+      "a11y": "role=separator",
+      "template": "<div data-ui=\"separator\" data-orientation=\"{orientation}\" role=\"separator\" aria-orientation=\"{orientation}\"></div>",
+      "safe_transforms": [
+        "change-orientation"
+      ]
+    },
+    "settings-page": {
+      "kind": "pattern",
+      "category": "composite",
+      "description": "Settings workspace layout with tabbed sections, forms, switches, and confirmation dialog",
+      "selector": "[data-ui='settings-page']",
+      "slots": [
+        "header",
+        "panel",
+        "actions"
+      ],
+      "template": "<section data-ui=\"settings-page\"><header data-part=\"header\">{intro}</header><div data-ui=\"tabs\">{sections}</div></section>",
+      "safe_transforms": [
+        "add-settings-field",
+        "reorder-tabs",
+        "replace-dialog-copy",
+        "change-switch-defaults"
+      ]
+    },
+    "sheet": {
+      "kind": "recipe",
+      "category": "overlay",
+      "description": "Edge-mounted sheet for mobile and compact workflows",
+      "selector": "[data-ui='sheet']",
+      "slots": [
+        "trigger",
+        "overlay",
+        "panel",
+        "title",
+        "body",
+        "close"
+      ],
+      "variants": {
+        "edge": {
+          "values": [
+            "bottom",
+            "right"
+          ],
+          "default": "bottom",
+          "attr": "data-edge"
+        }
+      },
+      "states": [
+        "closed",
+        "open",
+        "closing"
+      ],
+      "a11y": "role=dialog, aria-modal=true, focus-trap, escape-closes, return-focus→trigger",
+      "template": "<div data-ui=\"sheet\" data-state=\"closed\" id=\"{id}\">\n  <button data-ui=\"button\" data-part=\"trigger\" type=\"button\">{label}</button>\n  <div data-part=\"overlay\" hidden></div>\n  <section data-part=\"panel\" data-edge=\"bottom\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"{id}-title\" hidden tabindex=\"-1\">\n    <h2 id=\"{id}-title\" data-part=\"title\">{title}</h2>\n    <div data-part=\"body\">{body}</div>\n    <button data-part=\"close\" type=\"button\">Close</button>\n  </section>\n</div>",
+      "safe_transforms": [
+        "change-edge",
+        "replace-body-content"
+      ],
+      "controller": "sheet.js"
+    },
+    "spinner": {
+      "kind": "primitive",
+      "category": "feedback",
+      "description": "Loading indicator with size variants and reduced-motion support",
+      "selector": "[data-ui='spinner']",
+      "variants": {
+        "size": {
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "attr": "data-size"
+        }
+      },
+      "states": [
+        "active",
+        "paused"
+      ],
+      "a11y": "role=status",
+      "template": "<div data-ui=\"spinner\" data-size=\"{size}\" role=\"status\" aria-label=\"Loading\"></div>",
+      "safe_transforms": [
+        "change-size",
+        "change-accent-color"
+      ]
+    },
+    "stack": {
+      "kind": "primitive",
+      "category": "layout",
+      "description": "Flex layout helper for vertical or horizontal stacks with tokenized gaps",
+      "selector": "[data-ui='stack']",
+      "variants": {
+        "direction": {
+          "values": [
+            "vertical",
+            "horizontal"
+          ],
+          "default": "vertical",
+          "attr": "data-direction"
+        },
+        "gap": {
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "attr": "data-gap"
+        },
+        "align": {
+          "values": [
+            "start",
+            "center",
+            "end",
+            "stretch"
+          ],
+          "default": "stretch",
+          "attr": "data-align"
+        }
+      },
+      "template": "<div data-ui=\"stack\" data-direction=\"{direction}\" data-gap=\"{gap}\">{children}</div>",
+      "safe_transforms": [
+        "change-direction",
+        "change-gap",
+        "change-align",
+        "reorder-children"
+      ]
+    },
+    "surface": {
+      "kind": "primitive",
+      "category": "layout",
+      "description": "Generic elevated container for grouping content without extra structure",
+      "selector": "[data-ui='surface']",
+      "variants": {
+        "tone": {
+          "values": [
+            "default",
+            "muted",
+            "primary"
+          ],
+          "default": "default",
+          "attr": "data-variant"
+        }
+      },
+      "template": "<div data-ui=\"surface\" data-variant=\"{variant}\">{content}</div>",
+      "safe_transforms": [
+        "change-variant",
+        "replace-content"
+      ]
+    },
+    "switch": {
+      "kind": "primitive",
+      "category": "forms",
+      "description": "Button-based switch with checked and disabled states",
+      "selector": "[data-ui='switch']",
+      "states": [
+        "unchecked",
+        "checked",
+        "disabled"
+      ],
+      "a11y": "role=switch",
+      "template": "<button data-ui=\"switch\" type=\"button\" role=\"switch\" aria-checked=\"false\" data-state=\"unchecked\"></button>",
+      "safe_transforms": [
+        "toggle-checked-state",
+        "toggle-disabled-state",
+        "change-size-via-custom-css"
+      ]
+    },
+    "table": {
+      "kind": "recipe",
+      "category": "data-display",
+      "description": "Enhanced table with sortable columns and row selection status",
+      "selector": "[data-ui='table']",
+      "slots": [
+        "table",
+        "sort",
+        "row",
+        "row-select",
+        "status"
+      ],
+      "states": [
+        "ready"
+      ],
+      "template": "<div data-ui=\"table\" data-state=\"ready\">\n  <table data-part=\"table\">\n    <thead><tr><th><button data-part=\"sort\" type=\"button\">{column}</button></th></tr></thead>\n  </table>\n</div>",
+      "safe_transforms": [
+        "add-column",
+        "remove-column",
+        "change-sort-defaults"
+      ],
+      "controller": "table.js"
+    },
+    "tabs": {
+      "kind": "recipe",
+      "category": "navigation",
+      "description": "Accessible tabbed interface with click and keyboard navigation between linked panels",
+      "selector": "[data-ui='tabs']",
+      "slots": [
+        "list",
+        "trigger",
+        "panel"
+      ],
+      "variants": {
+        "orientation": {
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "default": "horizontal",
+          "attr": "data-orientation"
+        }
+      },
+      "states": [
+        "ready"
+      ],
+      "template": "<div data-ui=\"tabs\" data-state=\"ready\" data-orientation=\"horizontal\" id=\"{id}\">\n  <div data-part=\"list\" role=\"tablist\" aria-label=\"{label}\">\n    <button data-part=\"trigger\" data-state=\"active\" data-value=\"overview\" id=\"{id}-overview-tab\" type=\"button\" role=\"tab\" aria-selected=\"true\" aria-controls=\"{id}-overview-panel\" tabindex=\"0\">Overview</button>\n    <button data-part=\"trigger\" data-state=\"inactive\" data-value=\"activity\" id=\"{id}-activity-tab\" type=\"button\" role=\"tab\" aria-selected=\"false\" aria-controls=\"{id}-activity-panel\" tabindex=\"-1\">Activity</button>\n  </div>\n  <section data-part=\"panel\" data-state=\"active\" data-value=\"overview\" id=\"{id}-overview-panel\" role=\"tabpanel\" aria-labelledby=\"{id}-overview-tab\">{overview}</section>\n  <section data-part=\"panel\" data-state=\"inactive\" data-value=\"activity\" id=\"{id}-activity-panel\" role=\"tabpanel\" aria-labelledby=\"{id}-activity-tab\" hidden>{activity}</section>\n</div>",
+      "safe_transforms": [
+        "change-orientation",
+        "add-tab",
+        "remove-tab",
+        "update-panel-content",
+        "restyle-list-container"
+      ],
+      "controller": "tabs.js"
+    },
+    "textarea": {
+      "kind": "primitive",
+      "category": "forms",
+      "description": "Multi-line text input with size and validation states",
+      "selector": "[data-ui='textarea']",
+      "variants": {
+        "size": {
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "attr": "data-size"
+        }
+      },
+      "states": [
+        "default",
+        "invalid",
+        "readonly",
+        "disabled"
+      ],
+      "template": "<textarea data-ui=\"textarea\" data-size=\"{size}\" rows=\"4\" placeholder=\"{placeholder}\"></textarea>",
+      "safe_transforms": [
+        "change-placeholder",
+        "change-rows",
+        "toggle-disabled-state",
+        "set-invalid-state"
+      ]
+    },
+    "toast": {
+      "kind": "recipe",
+      "category": "feedback",
+      "description": "Toast stack with close controls and auto-dismiss timers",
+      "selector": "[data-ui='toast']",
+      "slots": [
+        "item",
+        "title",
+        "description",
+        "close"
+      ],
+      "states": [
+        "ready",
+        "closing"
+      ],
+      "a11y": "role=status",
+      "template": "<div data-ui=\"toast\" data-state=\"ready\" aria-live=\"polite\">\n  <section data-part=\"item\" data-duration=\"4000\">\n    <strong data-part=\"title\">{title}</strong>\n    <p data-part=\"description\">{description}</p>\n  </section>\n</div>",
+      "safe_transforms": [
+        "change-auto-dismiss-duration",
+        "add-item",
+        "remove-item"
+      ],
+      "controller": "toast.js"
+    },
+    "tooltip": {
+      "kind": "recipe",
+      "category": "overlay",
+      "description": "Informational tooltip that opens on hover and focus",
+      "selector": "[data-ui='tooltip']",
+      "slots": [
+        "trigger",
+        "content"
+      ],
+      "states": [
+        "closed",
+        "open"
+      ],
+      "a11y": "role=tooltip",
+      "template": "<span data-ui=\"tooltip\" data-state=\"closed\" id=\"{id}\">\n  <button data-part=\"trigger\" type=\"button\" aria-describedby=\"{id}-content\">?</button>\n  <div data-part=\"content\" id=\"{id}-content\" role=\"tooltip\" hidden>{content}</div>\n</span>",
+      "safe_transforms": [
+        "change-copy",
+        "change-placement-via-custom-css"
+      ],
+      "controller": "tooltip.js"
+    }
+  },
+  "patterns": {
+    "auth-form": {
+      "uses": [
+        "button",
+        "card",
+        "input",
+        "label",
+        "separator"
+      ],
+      "template": "<section data-ui=\"auth-form\"><article data-ui=\"card\" data-part=\"panel\">{content}</article></section>"
+    },
+    "crud-table": {
+      "uses": [
+        "badge",
+        "button",
+        "card",
+        "dialog",
+        "input",
+        "pagination",
+        "table"
+      ],
+      "template": "<section data-ui=\"crud-table\"><header data-part=\"header\">{toolbar}</header><article data-part=\"table-card\">{table}</article></section>"
+    },
+    "dashboard-shell": {
+      "uses": [
+        "avatar",
+        "badge",
+        "button",
+        "card",
+        "dropdown",
+        "grid",
+        "stack",
+        "surface",
+        "tabs"
+      ],
+      "template": "<section data-ui=\"dashboard-shell\"><div data-part=\"topbar\">{header}</div><div data-part=\"content\">{content}</div></section>"
+    },
+    "empty-state": {
+      "uses": [
+        "button",
+        "card",
+        "surface"
+      ],
+      "template": "<section data-ui=\"empty-state\"><article data-ui=\"card\" data-part=\"panel\">{content}</article></section>"
+    },
+    "search-results": {
+      "uses": [
+        "badge",
+        "card",
+        "input",
+        "pagination",
+        "spinner"
+      ],
+      "template": "<section data-ui=\"search-results\"><header data-part=\"header\">{query}</header><div data-part=\"results\">{results}</div></section>"
+    },
+    "settings-page": {
+      "uses": [
+        "button",
+        "card",
+        "dialog",
+        "input",
+        "label",
+        "select",
+        "switch",
+        "tabs",
+        "textarea"
+      ],
+      "template": "<section data-ui=\"settings-page\"><header data-part=\"header\">{intro}</header><div data-ui=\"tabs\">{sections}</div></section>"
+    }
+  },
+  "rules": {
+    "use_data_state_not_classes": true,
+    "always_aria_label_on_icon_buttons": true,
+    "always_aria_labelledby_on_dialog_panel": true,
+    "semantic_html_over_div_soup": true,
+    "tokens_only_no_hardcoded_values": true
+  }
+}

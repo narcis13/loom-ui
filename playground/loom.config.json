@@ -1,0 +1,53 @@
+{
+  "version": "1.0.0",
+  "theme": "default",
+  "output_dir": "./ui",
+  "tokens_split": false,
+  "include_core": true,
+  "installed": {
+    "primitives": [
+      "avatar",
+      "badge",
+      "button",
+      "card",
+      "checkbox",
+      "grid",
+      "input",
+      "kbd",
+      "label",
+      "radio",
+      "select",
+      "separator",
+      "spinner",
+      "stack",
+      "surface",
+      "switch",
+      "textarea"
+    ],
+    "recipes": [
+      "accordion",
+      "combobox",
+      "command-palette",
+      "date-picker",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "pagination",
+      "popover",
+      "select-custom",
+      "sheet",
+      "table",
+      "tabs",
+      "toast",
+      "tooltip"
+    ],
+    "patterns": [
+      "auth-form",
+      "crud-table",
+      "dashboard-shell",
+      "empty-state",
+      "search-results",
+      "settings-page"
+    ]
+  }
+}

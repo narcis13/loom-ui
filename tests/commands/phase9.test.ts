@@ -57,6 +57,13 @@ describe("loom phase 9", () => {
       expect(gallery).toContain("<!doctype html>");
       expect(gallery).toContain("data-gallery");
       expect(gallery).toContain('data-gallery-part="section"');
+      expect(gallery).toContain('data-gallery-theme-controls');
+      expect(gallery).toContain('data-gallery-theme-button="default"');
+      expect(gallery).toContain('data-gallery-theme-button="dark"');
+      expect(gallery).toContain('data-gallery-theme-button="midnight"');
+      expect(gallery).toContain('aria-label="Component filter"');
+      expect(gallery).toContain("Contract</summary>");
+      expect(gallery).toContain('data-gallery-part="protocol-card"');
       expect(gallery).toContain('data-ui="button"');
       expect(gallery).toContain('data-ui="dialog"');
       expect(gallery).toContain('data-ui="dashboard-shell"');
