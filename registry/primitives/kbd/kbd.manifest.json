@@ -17,6 +17,10 @@
 
   "states": {},
 
+  "props": {
+    "key": { "type": "string", "default": "", "description": "Key label text" }
+  },
+
   "a11y": {
     "notes": "Uses semantic <kbd> element; no additional ARIA needed",
     "keyboard": {}

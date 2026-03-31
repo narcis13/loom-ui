@@ -37,6 +37,12 @@
 
   "states": {},
 
+  "props": {
+    "src": { "type": "string", "default": "", "description": "Image source URL" },
+    "alt": { "type": "string", "default": "", "description": "Image alt text" },
+    "fallback": { "type": "string", "default": "", "description": "Fallback initials text" }
+  },
+
   "a11y": {
     "required_attrs": ["img must have alt attribute"],
     "keyboard": {}

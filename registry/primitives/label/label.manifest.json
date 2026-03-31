@@ -40,6 +40,11 @@
     "disabled": { "attr": "data-state=\"disabled\"" }
   },
 
+  "props": {
+    "text": { "type": "string", "default": "", "description": "Label text content" },
+    "required": { "type": "boolean", "default": false, "description": "Whether the field is required" }
+  },
+
   "a11y": {
     "required_attrs": ["for attribute matching input id"],
     "keyboard": {}

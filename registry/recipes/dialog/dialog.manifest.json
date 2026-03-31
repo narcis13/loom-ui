@@ -87,6 +87,12 @@
     "closing": { "attr": "data-state=\"closing\"", "transient": true }
   },
 
+  "props": {
+    "title": { "type": "string", "default": "", "description": "Dialog title text" },
+    "description": { "type": "string", "default": "", "description": "Dialog description text" },
+    "triggerText": { "type": "string", "default": "Open", "description": "Text for the trigger button" }
+  },
+
   "a11y": {
     "role": "dialog",
     "aria-modal": true,

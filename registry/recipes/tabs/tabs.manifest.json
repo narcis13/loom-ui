@@ -51,6 +51,10 @@
     "default": { "attr": "data-state=\"default\"", "default": true }
   },
 
+  "props": {
+    "activeTab": { "type": "number", "default": 0, "description": "Index of the initially active tab" }
+  },
+
   "a11y": {
     "role": "tablist",
     "required_attrs": [

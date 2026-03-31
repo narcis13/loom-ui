@@ -36,6 +36,12 @@
     "disabled": { "attr": "disabled" }
   },
 
+  "props": {
+    "checked": { "type": "boolean", "default": false, "description": "Whether the checkbox is checked" },
+    "disabled": { "type": "boolean", "default": false, "description": "Whether the checkbox is disabled" },
+    "label": { "type": "string", "default": "", "description": "Checkbox label text" }
+  },
+
   "a11y": {
     "required_attrs": [
       "must be wrapped in label or have aria-label",

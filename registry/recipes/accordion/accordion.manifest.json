@@ -58,6 +58,10 @@
     "expanded": { "attr": "data-state=\"expanded\"", "applied_to": "item" }
   },
 
+  "props": {
+    "mode": { "type": "string", "default": "single", "description": "Expand mode: single or multiple" }
+  },
+
   "a11y": {
     "required_attrs": [
       "aria-expanded on trigger",

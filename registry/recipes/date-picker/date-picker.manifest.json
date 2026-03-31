@@ -82,6 +82,11 @@
     "open": { "attr": "data-state=\"open\"" }
   },
 
+  "props": {
+    "value": { "type": "string", "default": "", "description": "Selected date value" },
+    "placeholder": { "type": "string", "default": "Select date", "description": "Input placeholder text" }
+  },
+
   "a11y": {
     "required_attrs": [
       "aria-haspopup=\"dialog\" on input",

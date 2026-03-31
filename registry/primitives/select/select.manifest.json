@@ -28,6 +28,12 @@
     "disabled": { "attr": "disabled" }
   },
 
+  "props": {
+    "placeholder": { "type": "string", "default": "", "description": "Placeholder text" },
+    "value": { "type": "string", "default": "", "description": "Selected value" },
+    "disabled": { "type": "boolean", "default": false, "description": "Whether the select is disabled" }
+  },
+
   "a11y": {
     "required_attrs": [
       "aria-invalid=\"true\" when in error state",

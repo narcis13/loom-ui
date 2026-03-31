@@ -76,6 +76,10 @@
     "open": { "attr": "data-state=\"open\"" }
   },
 
+  "props": {
+    "placeholder": { "type": "string", "default": "Type a command...", "description": "Search input placeholder" }
+  },
+
   "a11y": {
     "role": "dialog",
     "aria-modal": true,

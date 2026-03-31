@@ -52,6 +52,10 @@
     "open": { "attr": "data-state=\"open\"" }
   },
 
+  "props": {
+    "triggerText": { "type": "string", "default": "Open", "description": "Text for the trigger button" }
+  },
+
   "a11y": {
     "required_attrs": [
       "aria-expanded on trigger",

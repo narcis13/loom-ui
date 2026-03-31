@@ -35,6 +35,13 @@
     "disabled": { "attr": "disabled" }
   },
 
+  "props": {
+    "checked": { "type": "boolean", "default": false, "description": "Whether the radio is checked" },
+    "disabled": { "type": "boolean", "default": false, "description": "Whether the radio is disabled" },
+    "value": { "type": "string", "default": "", "description": "Radio value" },
+    "label": { "type": "string", "default": "", "description": "Radio label text" }
+  },
+
   "a11y": {
     "required_attrs": [
       "fieldset + legend for radio groups",

@@ -228,7 +228,7 @@
 </head>
 <body>
 
-<div class="gallery">
+<div class="gallery" l-data="gallery">
 
   <!-- ═══════════════════════════════════ HEADER ═══════════════════════════════════ -->
   <header class="gallery-header">
@@ -240,17 +240,17 @@
       <div class="controls-group">
         <span class="controls-label">Theme</span>
         <div data-ui="button-group">
-          <button data-ui="button" data-variant="primary" data-size="sm" onclick="setTheme('default')">Default</button>
-          <button data-ui="button" data-size="sm" onclick="setTheme('midnight')">Midnight</button>
-          <button data-ui="button" data-size="sm" onclick="setTheme('paper')">Paper</button>
-          <button data-ui="button" data-size="sm" onclick="setTheme('brutalist')">Brutalist</button>
+          <button data-ui="button" data-variant="primary" data-size="sm" l-on:click="setTheme('default')">Default</button>
+          <button data-ui="button" data-size="sm" l-on:click="setTheme('midnight')">Midnight</button>
+          <button data-ui="button" data-size="sm" l-on:click="setTheme('paper')">Paper</button>
+          <button data-ui="button" data-size="sm" l-on:click="setTheme('brutalist')">Brutalist</button>
         </div>
       </div>
       <div class="controls-group">
         <span class="controls-label">Mode</span>
         <div data-ui="button-group">
-          <button data-ui="button" data-variant="primary" data-size="sm" onclick="setMode('light')">Light</button>
-          <button data-ui="button" data-size="sm" onclick="setMode('dark')">Dark</button>
+          <button data-ui="button" data-variant="primary" data-size="sm" l-on:click="setMode('light')">Light</button>
+          <button data-ui="button" data-size="sm" l-on:click="setMode('dark')">Dark</button>
         </div>
       </div>
     </div>
@@ -527,13 +527,13 @@
       <div class="demo-col">
         <div class="demo-row">
           <label data-ui="switch-label">
-            <button data-ui="switch" role="switch" aria-checked="false" data-state="off" onclick="toggleSwitch(this)">
+            <button data-ui="switch" role="switch" aria-checked="false" data-state="off" l-on:click="toggleSwitch($event.currentTarget)">
               <span data-part="thumb"></span>
             </button>
             <span>Notifications</span>
           </label>
           <label data-ui="switch-label">
-            <button data-ui="switch" role="switch" aria-checked="true" data-state="on" onclick="toggleSwitch(this)">
+            <button data-ui="switch" role="switch" aria-checked="true" data-state="on" l-on:click="toggleSwitch($event.currentTarget)">
               <span data-part="thumb"></span>
             </button>
             <span>Dark mode</span>
@@ -547,19 +547,19 @@
         </div>
         <div class="demo-row">
           <label data-ui="switch-label">
-            <button data-ui="switch" data-size="sm" role="switch" aria-checked="true" data-state="on" onclick="toggleSwitch(this)">
+            <button data-ui="switch" data-size="sm" role="switch" aria-checked="true" data-state="on" l-on:click="toggleSwitch($event.currentTarget)">
               <span data-part="thumb"></span>
             </button>
             <span>Small</span>
           </label>
           <label data-ui="switch-label">
-            <button data-ui="switch" role="switch" aria-checked="true" data-state="on" onclick="toggleSwitch(this)">
+            <button data-ui="switch" role="switch" aria-checked="true" data-state="on" l-on:click="toggleSwitch($event.currentTarget)">
               <span data-part="thumb"></span>
             </button>
             <span>Medium</span>
           </label>
           <label data-ui="switch-label">
-            <button data-ui="switch" data-size="lg" role="switch" aria-checked="true" data-state="on" onclick="toggleSwitch(this)">
+            <button data-ui="switch" data-size="lg" role="switch" aria-checked="true" data-state="on" l-on:click="toggleSwitch($event.currentTarget)">
               <span data-part="thumb"></span>
             </button>
             <span>Large</span>
@@ -1114,10 +1114,10 @@
 
     <div class="demo">
       <div class="demo-row">
-        <button data-ui="button" data-variant="outline" onclick="showToast('default')">Default Toast</button>
-        <button data-ui="button" data-variant="outline" onclick="showToast('success')">Success Toast</button>
-        <button data-ui="button" data-variant="outline" onclick="showToast('error')">Error Toast</button>
-        <button data-ui="button" data-variant="outline" onclick="showToast('warning')">Warning Toast</button>
+        <button data-ui="button" data-variant="outline" l-on:click="showToast('default')">Default Toast</button>
+        <button data-ui="button" data-variant="outline" l-on:click="showToast('success')">Success Toast</button>
+        <button data-ui="button" data-variant="outline" l-on:click="showToast('error')">Error Toast</button>
+        <button data-ui="button" data-variant="outline" l-on:click="showToast('warning')">Warning Toast</button>
       </div>
     </div>
   </section>
@@ -1213,7 +1213,7 @@
                 <p style="font-size: var(--text-sm); font-weight: var(--weight-medium);">Email Notifications</p>
                 <p style="font-size: var(--text-xs); color: var(--color-fg-muted);">Receive emails about account activity</p>
               </div>
-              <button data-ui="switch" role="switch" aria-checked="true" data-state="on" onclick="toggleSwitch(this)">
+              <button data-ui="switch" role="switch" aria-checked="true" data-state="on" l-on:click="toggleSwitch($event.currentTarget)">
                 <span data-part="thumb"></span>
               </button>
             </div>
@@ -1223,7 +1223,7 @@
                 <p style="font-size: var(--text-sm); font-weight: var(--weight-medium);">Marketing Emails</p>
                 <p style="font-size: var(--text-xs); color: var(--color-fg-muted);">Hear about new features and updates</p>
               </div>
-              <button data-ui="switch" role="switch" aria-checked="false" data-state="off" onclick="toggleSwitch(this)">
+              <button data-ui="switch" role="switch" aria-checked="false" data-state="off" l-on:click="toggleSwitch($event.currentTarget)">
                 <span data-part="thumb"></span>
               </button>
             </div>
@@ -1336,99 +1336,72 @@
 
 
 <!-- ═══════════════════════════════ SCRIPTS ═══════════════════════════════ -->
-<script type="module">
-  // ── Import Controllers ──
-  import { createDialog } from '../registry/recipes/dialog/dialog.js';
-  import { createTabs } from '../registry/recipes/tabs/tabs.js';
-  import { createAccordion } from '../registry/recipes/accordion/accordion.js';
-  import { createDropdown } from '../registry/recipes/dropdown/dropdown.js';
-  import { createTooltip } from '../registry/recipes/tooltip/tooltip.js';
-  import { createToastContainer } from '../registry/recipes/toast/toast.js';
+<script src="../registry/core/loom-core.js" data-manual></script>
+<script>
+  // ── Gallery Data Component ──
+  Loom.data('gallery', function() {
+    var themeSheets = {
+      default: document.getElementById('theme-default'),
+      midnight: document.getElementById('theme-midnight'),
+      paper: document.getElementById('theme-paper'),
+      brutalist: document.getElementById('theme-brutalist')
+    };
 
-  // ── Auto-init all recipes ──
-  document.querySelectorAll('[data-ui="dialog"]').forEach(createDialog);
-  document.querySelectorAll('[data-ui="tabs"]').forEach(createTabs);
-  document.querySelectorAll('[data-ui="accordion"]').forEach(createAccordion);
-  document.querySelectorAll('[data-ui="dropdown"]').forEach(createDropdown);
-  document.querySelectorAll('[data-ui="tooltip"]').forEach(createTooltip);
+    return {
+      activeTheme: 'default',
+      activeMode: 'light',
 
-  // ── Toast ──
-  const toastContainer = document.getElementById('toast-container');
-  const toastApi = createToastContainer(toastContainer);
+      setTheme: function(name) {
+        var keys = Object.keys(themeSheets);
+        for (var i = 0; i < keys.length; i++) themeSheets[keys[i]].disabled = true;
+        if (themeSheets[name]) themeSheets[name].disabled = false;
+        this.activeTheme = name;
+        var group = document.querySelectorAll('.controls .controls-group')[0];
+        if (!group) return;
+        var buttons = group.querySelectorAll('[data-ui="button"]');
+        var themes = ['default', 'midnight', 'paper', 'brutalist'];
+        for (var j = 0; j < buttons.length; j++) {
+          if (themes[j] === name) buttons[j].dataset.variant = 'primary';
+          else delete buttons[j].dataset.variant;
+        }
+      },
 
-  const toastMessages = {
-    default: { message: 'This is a notification.', tone: 'default' },
-    success: { message: 'Changes saved successfully!', tone: 'success', icon: '&#10003;' },
-    error: { message: 'Something went wrong. Please try again.', tone: 'error', icon: '&#10007;' },
-    warning: { message: 'Your session is about to expire.', tone: 'warning', icon: '&#9888;' },
-  };
+      setMode: function(mode) {
+        document.documentElement.dataset.theme = mode;
+        this.activeMode = mode;
+        var group = document.querySelectorAll('.controls .controls-group')[1];
+        if (!group) return;
+        var buttons = group.querySelectorAll('[data-ui="button"]');
+        for (var i = 0; i < buttons.length; i++) {
+          var btnMode = i === 0 ? 'light' : 'dark';
+          if (btnMode === mode) buttons[i].dataset.variant = 'primary';
+          else delete buttons[i].dataset.variant;
+        }
+      },
 
-  window.showToast = function(type) {
-    const opts = toastMessages[type] || toastMessages.default;
-    toastApi.add({ ...opts, duration: 4000 });
-  };
+      toggleSwitch: function(el) {
+        var isOn = el.getAttribute('aria-checked') === 'true';
+        el.setAttribute('aria-checked', isOn ? 'false' : 'true');
+        el.dataset.state = isOn ? 'off' : 'on';
+      },
 
-  // ── Theme Switcher ──
-  const themeSheets = {
-    default: document.getElementById('theme-default'),
-    midnight: document.getElementById('theme-midnight'),
-    paper: document.getElementById('theme-paper'),
-    brutalist: document.getElementById('theme-brutalist'),
-  };
-
-  let activeTheme = 'default';
-
-  window.setTheme = function(name) {
-    // Disable all theme sheets
-    Object.values(themeSheets).forEach(sheet => sheet.disabled = true);
-    // Enable selected
-    if (themeSheets[name]) {
-      themeSheets[name].disabled = false;
-    }
-    activeTheme = name;
-    updateThemeButtons();
-  };
-
-  window.setMode = function(mode) {
-    document.documentElement.dataset.theme = mode;
-    updateModeButtons();
-  };
-
-  function updateThemeButtons() {
-    const group = document.querySelectorAll('.controls .controls-group')[0];
-    if (!group) return;
-    const buttons = group.querySelectorAll('[data-ui="button"]');
-    const themes = ['default', 'midnight', 'paper', 'brutalist'];
-    buttons.forEach((btn, i) => {
-      if (themes[i] === activeTheme) {
-        btn.dataset.variant = 'primary';
-      } else {
-        delete btn.dataset.variant;
+      showToast: function(type) {
+        var container = document.getElementById('toast-container');
+        if (!container || !container._loomToast) return;
+        var msgs = {
+          'default': { message: 'This is a notification.', tone: 'default' },
+          'success': { message: 'Changes saved successfully!', tone: 'success', icon: '\u2713' },
+          'error': { message: 'Something went wrong. Please try again.', tone: 'error', icon: '\u2717' },
+          'warning': { message: 'Your session is about to expire.', tone: 'warning', icon: '\u26A0' }
+        };
+        var opts = msgs[type] || msgs['default'];
+        container._loomToast.add({ message: opts.message, tone: opts.tone, icon: opts.icon || '', duration: 4000 });
       }
-    });
-  }
+    };
+  });
 
-  function updateModeButtons() {
-    const group = document.querySelectorAll('.controls .controls-group')[1];
-    if (!group) return;
-    const buttons = group.querySelectorAll('[data-ui="button"]');
-    const mode = document.documentElement.dataset.theme;
-    buttons.forEach((btn, i) => {
-      const btnMode = i === 0 ? 'light' : 'dark';
-      if (btnMode === mode) {
-        btn.dataset.variant = 'primary';
-      } else {
-        delete btn.dataset.variant;
-      }
-    });
-  }
-
-  // ── Switch Toggle Helper ──
-  window.toggleSwitch = function(el) {
-    const isOn = el.getAttribute('aria-checked') === 'true';
-    el.setAttribute('aria-checked', isOn ? 'false' : 'true');
-    el.dataset.state = isOn ? 'off' : 'on';
-  };
+  // ── Start Loom ──
+  Loom.start();
 </script>
 
 </body>

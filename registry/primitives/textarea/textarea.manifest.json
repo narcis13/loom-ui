@@ -28,6 +28,13 @@
     "disabled": { "attr": "disabled" }
   },
 
+  "props": {
+    "placeholder": { "type": "string", "default": "", "description": "Placeholder text" },
+    "value": { "type": "string", "default": "", "description": "Textarea value" },
+    "disabled": { "type": "boolean", "default": false, "description": "Whether the textarea is disabled" },
+    "rows": { "type": "number", "default": 3, "description": "Number of visible text rows" }
+  },
+
   "a11y": {
     "required_attrs": [
       "aria-invalid=\"true\" when in error state",

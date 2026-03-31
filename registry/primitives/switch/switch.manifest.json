@@ -35,6 +35,12 @@
     "disabled": { "attr": "disabled" }
   },
 
+  "props": {
+    "checked": { "type": "boolean", "default": false, "description": "Whether the switch is on" },
+    "disabled": { "type": "boolean", "default": false, "description": "Whether the switch is disabled" },
+    "label": { "type": "string", "default": "", "description": "Switch label text" }
+  },
+
   "a11y": {
     "required_attrs": [
       "role=\"switch\" on the button element",

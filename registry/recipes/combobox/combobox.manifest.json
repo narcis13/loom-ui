@@ -53,6 +53,11 @@
     "loading": { "attr": "data-state=\"loading\"" }
   },
 
+  "props": {
+    "placeholder": { "type": "string", "default": "", "description": "Input placeholder text" },
+    "value": { "type": "string", "default": "", "description": "Selected value" }
+  },
+
   "a11y": {
     "required_attrs": [
       "role=\"combobox\" on input",

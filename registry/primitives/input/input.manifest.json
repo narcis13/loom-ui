@@ -41,6 +41,13 @@
     "disabled": { "attr": "disabled" }
   },
 
+  "props": {
+    "placeholder": { "type": "string", "default": "", "description": "Placeholder text" },
+    "value": { "type": "string", "default": "", "description": "Input value" },
+    "disabled": { "type": "boolean", "default": false, "description": "Whether the input is disabled" },
+    "type": { "type": "string", "default": "text", "description": "Input type attribute" }
+  },
+
   "a11y": {
     "required_attrs": [
       "aria-invalid=\"true\" when in error state",

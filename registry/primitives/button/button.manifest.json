@@ -41,6 +41,12 @@
     "disabled": { "attr": "disabled" }
   },
 
+  "props": {
+    "caption": { "type": "string", "default": "Click me", "description": "Button label text" },
+    "icon": { "type": "string", "default": "", "description": "Icon content for the icon slot" },
+    "disabled": { "type": "boolean", "default": false, "description": "Whether the button is disabled" }
+  },
+
   "a11y": {
     "required_attrs": ["aria-label required when icon-only (no text content)"],
     "keyboard": {

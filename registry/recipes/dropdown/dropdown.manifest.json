@@ -58,6 +58,10 @@
     "open": { "attr": "data-state=\"open\"" }
   },
 
+  "props": {
+    "triggerText": { "type": "string", "default": "Menu", "description": "Text for the trigger button" }
+  },
+
   "a11y": {
     "required_attrs": [
       "role=\"menu\" on menu",

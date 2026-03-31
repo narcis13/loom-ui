@@ -40,6 +40,11 @@
     "visible": { "attr": "data-state=\"visible\"" }
   },
 
+  "props": {
+    "content": { "type": "string", "default": "", "description": "Tooltip text content" },
+    "delay": { "type": "number", "default": 200, "description": "Show delay in milliseconds" }
+  },
+
   "a11y": {
     "required_attrs": [
       "role=\"tooltip\" on content",

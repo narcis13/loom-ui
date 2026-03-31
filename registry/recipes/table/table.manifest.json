@@ -83,6 +83,10 @@
     "default": { "attr": "data-state=\"default\"", "default": true }
   },
 
+  "props": {
+    "selectable": { "type": "boolean", "default": false, "description": "Whether rows are selectable" }
+  },
+
   "a11y": {
     "required_attrs": [
       "Proper table semantics (table, thead, tbody, tr, th, td)",

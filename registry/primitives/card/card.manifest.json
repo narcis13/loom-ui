@@ -61,6 +61,11 @@
 
   "states": {},
 
+  "props": {
+    "title": { "type": "string", "default": "", "description": "Card title text" },
+    "description": { "type": "string", "default": "", "description": "Card description text" }
+  },
+
   "a11y": {
     "keyboard": {}
   },

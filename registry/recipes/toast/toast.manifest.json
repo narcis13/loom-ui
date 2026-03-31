@@ -72,6 +72,12 @@
     "removed": { "attr": "data-state=\"removed\"", "applied_to": "toast" }
   },
 
+  "props": {
+    "message": { "type": "string", "default": "", "description": "Toast message text" },
+    "tone": { "type": "string", "default": "default", "description": "Toast tone: default, success, error, warning" },
+    "duration": { "type": "number", "default": 5000, "description": "Auto-dismiss duration in milliseconds" }
+  },
+
   "a11y": {
     "required_attrs": [
       "role=\"region\" on container",

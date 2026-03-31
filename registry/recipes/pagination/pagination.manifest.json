@@ -58,6 +58,11 @@
     "active": { "attr": "data-state=\"active\"", "applied_to": "page" }
   },
 
+  "props": {
+    "currentPage": { "type": "number", "default": 1, "description": "Current active page number" },
+    "totalPages": { "type": "number", "default": 1, "description": "Total number of pages" }
+  },
+
   "a11y": {
     "required_attrs": [
       "role=\"navigation\" on nav",

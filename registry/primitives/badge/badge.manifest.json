@@ -30,6 +30,10 @@
 
   "states": {},
 
+  "props": {
+    "text": { "type": "string", "default": "", "description": "Badge text content" }
+  },
+
   "a11y": {
     "keyboard": {}
   },

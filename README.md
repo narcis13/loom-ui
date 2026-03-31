@@ -54,17 +54,17 @@ Loom is a CLI-distributed UI framework that generates and maintains plain HTML, 
 
 Every component ships with a JSON manifest that describes its structure, slots, variants, states, accessibility requirements, and safe transformations. The CLI uses these manifests to audit your markup, auto-repair issues, generate AI context files, and explain components in human-readable form.
 
-- **No virtual DOM, no reactivity system, no JSX**
+- **Alpine-style reactivity via loom-core.js** — optional reactive directives for declarative UIs
 - **No webpack, no Vite, no compile step**
 - **No node_modules dependency at runtime**
 - **Zero external dependencies in output**
 
 ## What Loom Is NOT
 
-- Not a JavaScript framework (no virtual DOM, no reactivity system, no JSX)
+- Not a virtual DOM framework (no JSX, no VDOM diffing — uses lightweight reactive proxies instead)
 - Not a build tool (no webpack, no Vite, no compile step)
 - Not a utility-first CSS library (not Tailwind)
-- Not a package you import at runtime (no node_modules dependency)
+- Not a package you import at runtime (no node_modules dependency — single `<script>` tag)
 - Not a design system for humans to browse — it is a design system for agents to parse
 
 ---
@@ -646,6 +646,116 @@ The `loom.js` script auto-initializes all recipe components:
 3. Sets up a `MutationObserver` that watches for dynamically added components and initializes them automatically.
 
 This means recipe components work out of the box — just include the script and write the HTML.
+
+### Loom Core (Unified Reactive Bundle)
+
+`loom-core.js` is an all-in-one, zero-dependency script that bundles the reactive engine, directive system, all core utilities, and all 15 recipe controllers into a single CDN-ready file.
+
+```html
+<!-- Drop-in — no build step, no modules needed -->
+<script src="loom-core.js"></script>
+```
+
+**Size:** ~47KB minified, ~12KB gzipped.
+
+#### Architecture
+
+loom-core.js is organized into 9 sections:
+
+| Section | Description |
+|---------|-------------|
+| **Reactive Engine** | `reactive()`, `effect()`, `batch()`, `untrack()` — Proxy-based dependency tracking with microtask-batched updates |
+| **Expression Evaluator** | Compiles and caches `with(scope)` expressions via `new Function()` |
+| **Directive System** | Parses `l-*`, `:attr`, `@event` attributes; priority-ordered processing |
+| **Magic Properties** | `$el`, `$refs`, `$store`, `$state`, `$variant`, `$ui`, `$dispatch`, `$nextTick`, `$watch`, `$id` |
+| **Loom Bridge** | Syncs `data-state`/`data-variant` between reactive scopes and DOM attributes |
+| **Core Utilities** | DOM helpers, event delegation, focus management, transitions, utils |
+| **Recipe Controllers** | All 15 built-in controllers (dialog, tabs, accordion, etc.) |
+| **Global API** | `Loom.data()`, `Loom.store()`, `Loom.directive()`, `Loom.magic()`, `Loom.plugin()`, `Loom.controller()` |
+| **Bootstrap** | Auto-init on DOMContentLoaded, MutationObserver for dynamic elements |
+
+#### Reactive Directives
+
+| Directive | Shorthand | Description |
+|-----------|-----------|-------------|
+| `l-data` | — | Creates a reactive scope on an element |
+| `l-text` | — | Sets `textContent` reactively |
+| `l-html` | — | Sets `innerHTML` reactively |
+| `l-bind:attr` | `:attr` | Binds attributes reactively (class, style, boolean attrs) |
+| `l-on:event` | `@event` | Attaches event listeners with modifiers (prevent, stop, once, self, debounce, throttle, key modifiers) |
+| `l-model` | — | Two-way binding for inputs, checkboxes, radios, selects (with .number, .trim, .lazy, .debounce modifiers) |
+| `l-show` | — | Toggles `display` with optional enter/leave transitions |
+| `l-if` | — | Conditional rendering (on `<template>` elements) |
+| `l-for` | — | List rendering (on `<template>` elements, `item in items` or `(item, index) in items`) |
+| `l-ref` | — | Stores element reference in `$refs` |
+| `l-init` | — | Runs initialization code once |
+| `l-effect` | — | Runs a side effect with dependency tracking |
+| `l-cloak` | — | Hides element until Loom initializes |
+| `l-teleport` | — | Moves element to a target selector in the DOM |
+
+#### Example: Reactive Counter
+
+```html
+<div l-data="{ count: 0 }">
+  <span l-text="count"></span>
+  <button @click="count++">Increment</button>
+</div>
+```
+
+#### Example: Conditional + List Rendering
+
+```html
+<div l-data="{ items: ['Apple', 'Banana', 'Cherry'], show: true }">
+  <button @click="show = !show">Toggle</button>
+  <template l-if="show">
+    <ul>
+      <template l-for="(item, i) in items">
+        <li l-text="i + '. ' + item"></li>
+      </template>
+    </ul>
+  </template>
+</div>
+```
+
+#### Example: Global Store
+
+```html
+<script>
+  Loom.store('app', { theme: 'dark', user: 'Claude' });
+</script>
+
+<div l-data="{}">
+  <span l-text="$store.app.user"></span>
+  <button @click="$store.app.theme = $store.app.theme === 'dark' ? 'light' : 'dark'">
+    Toggle Theme
+  </button>
+</div>
+```
+
+#### Backwards Compatibility
+
+Existing HTML without `l-*` directives continues to work — controllers auto-initialize from `data-ui` attributes. The reactive directive system is purely additive; you can use just the controllers, just the directives, or both together.
+
+#### Public API
+
+```js
+Loom.version           // '0.1.0'
+Loom.reactive(obj)     // Create a reactive proxy
+Loom.effect(fn)        // Create auto-tracked side effect
+Loom.batch(fn)         // Batch multiple writes, flush once
+Loom.untrack(fn)       // Read without tracking dependencies
+Loom.evaluate(expr, scope, el)       // Evaluate expression in scope
+Loom.evaluateAssignment(expr, scope, el)  // Execute statement in scope
+Loom.nextTick(fn)      // Run after current microtask flush
+Loom.data(name, factory)      // Register named data factory
+Loom.store(name, obj)         // Create global reactive store
+Loom.directive(name, handler) // Register custom directive
+Loom.magic(name, callback)    // Register custom magic property
+Loom.plugin(fn)               // Execute plugin with Loom instance
+Loom.controller(name, factory) // Register custom controller
+Loom.start()           // Manual bootstrap (auto-runs by default)
+Loom.initTree(root, parentScope)  // Manually initialize a subtree
+```
 
 ---
 
