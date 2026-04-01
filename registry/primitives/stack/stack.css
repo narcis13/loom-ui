@@ -57,3 +57,55 @@
 [data-ui="stack"][data-align="stretch"] {
   align-items: stretch;
 }
+
+/* ── Justify ── */
+[data-ui="stack"][data-justify="start"] {
+  justify-content: flex-start;
+}
+
+[data-ui="stack"][data-justify="center"] {
+  justify-content: center;
+}
+
+[data-ui="stack"][data-justify="end"] {
+  justify-content: flex-end;
+}
+
+[data-ui="stack"][data-justify="between"] {
+  justify-content: space-between;
+}
+
+[data-ui="stack"][data-justify="around"] {
+  justify-content: space-around;
+}
+
+/* ── Wrap ── */
+[data-ui="stack"][data-wrap] {
+  flex-wrap: wrap;
+}
+
+/* ── Extended Gap ── */
+[data-ui="stack"][data-gap="10"] {
+  gap: var(--space-10);
+}
+
+[data-ui="stack"][data-gap="12"] {
+  gap: var(--space-12);
+}
+
+[data-ui="stack"][data-gap="16"] {
+  gap: var(--space-16);
+}
+
+/* ── Child Flex ── */
+[data-ui="stack"] > [data-flex="1"] {
+  flex: 1;
+}
+
+[data-ui="stack"] > [data-flex="auto"] {
+  flex: auto;
+}
+
+[data-ui="stack"] > [data-flex="none"] {
+  flex: none;
+}

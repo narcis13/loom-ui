@@ -533,6 +533,96 @@ export const closeLabelRule: AuditRule = {
   },
 };
 
+// ── Rule: no-class-attribute ──
+// Components should never use class attributes — data attributes are the Loom protocol
+export const noClassAttributeRule: AuditRule = {
+  id: "no-class-attribute",
+  severity: "warning",
+  description: "Element uses class attribute — Loom components use data-ui, data-variant, data-state instead",
+  check(component, _manifest) {
+    const results: AuditResult[] = [];
+
+    function walk(el: ParsedElement) {
+      if (el.attrs["class"]) {
+        results.push({
+          rule_id: "no-class-attribute",
+          severity: "warning",
+          component_name: component.name,
+          file: component.file,
+          line: countLineFromEl(component, el),
+          message: `Element <${el.tag}> uses class="${el.attrs["class"]}" — use data-ui, data-variant, or data-state attributes instead of classes`,
+        });
+      }
+      for (const child of el.children) {
+        walk(child);
+      }
+    }
+
+    walk(component.root);
+    return results;
+  },
+};
+
+// ── Rule: token-aware-style ──
+// Inline style attributes should reference design tokens (var(--...)) not hardcoded values
+const HARDCODED_COLOR_RE = /#[0-9a-fA-F]{3,8}\b/;
+const HARDCODED_RGB_RE = /\b(?:rgb|hsl|oklch)\s*\(/i;
+const HARDCODED_PX_RE = /(?:^|[\s:;])(\d+(?:\.\d+)?px)/;
+const TOKEN_VAR_RE = /var\(\s*--/;
+
+export const tokenAwareStyleRule: AuditRule = {
+  id: "token-aware-style",
+  severity: "info",
+  description: "Inline style uses hardcoded values instead of design tokens",
+  check(component, _manifest) {
+    const results: AuditResult[] = [];
+
+    function walk(el: ParsedElement) {
+      const style = el.attrs["style"];
+      if (style) {
+        // Check for hardcoded colors
+        if (HARDCODED_COLOR_RE.test(style) || HARDCODED_RGB_RE.test(style)) {
+          results.push({
+            rule_id: "token-aware-style",
+            severity: "info",
+            component_name: component.name,
+            file: component.file,
+            line: countLineFromEl(component, el),
+            message: `Element <${el.tag}> inline style contains hardcoded color values — use var(--color-*) tokens instead`,
+          });
+        }
+
+        // Check for hardcoded pixel values (skip width/height percentages which are fine)
+        // Only flag if there are px values and NO token references in the same property
+        const properties = style.split(";").map(s => s.trim()).filter(Boolean);
+        for (const prop of properties) {
+          if (HARDCODED_PX_RE.test(prop) && !TOKEN_VAR_RE.test(prop)) {
+            // Whitelist common non-token properties: width/height with specific values, grid-column
+            const propName = prop.split(":")[0]?.trim().toLowerCase() ?? "";
+            const whitelisted = ["width", "height", "min-width", "max-width", "min-height", "max-height", "grid-column", "top", "left", "right", "bottom"];
+            if (!whitelisted.includes(propName)) {
+              results.push({
+                rule_id: "token-aware-style",
+                severity: "info",
+                component_name: component.name,
+                file: component.file,
+                line: countLineFromEl(component, el),
+                message: `Element <${el.tag}> inline style "${prop.trim()}" uses hardcoded pixel value — use var(--space-*) or var(--text-*) tokens instead`,
+              });
+            }
+          }
+        }
+      }
+      for (const child of el.children) {
+        walk(child);
+      }
+    }
+
+    walk(component.root);
+    return results;
+  },
+};
+
 // ── All rules ──
 export const ALL_RULES: AuditRule[] = [
   requiredSlotRule,
@@ -545,6 +635,8 @@ export const ALL_RULES: AuditRule[] = [
   orphanPartRule,
   ariaDescribedbyRule,
   closeLabelRule,
+  noClassAttributeRule,
+  tokenAwareStyleRule,
 ];
 
 // Helper to estimate line number from element position

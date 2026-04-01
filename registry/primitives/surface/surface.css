@@ -35,3 +35,37 @@
 [data-ui="surface"][data-size="lg"] {
   padding: var(--space-6);
 }
+
+/* ── Max-Width Containers ── */
+[data-ui="surface"][data-max="sm"] {
+  max-width: 640px;
+  margin-inline: auto;
+}
+
+[data-ui="surface"][data-max="md"] {
+  max-width: 768px;
+  margin-inline: auto;
+}
+
+[data-ui="surface"][data-max="lg"] {
+  max-width: 1024px;
+  margin-inline: auto;
+}
+
+[data-ui="surface"][data-max="xl"] {
+  max-width: 1280px;
+  margin-inline: auto;
+}
+
+[data-ui="surface"][data-max="full"] {
+  max-width: 100%;
+}
+
+/* ── Text Alignment ── */
+[data-ui="surface"][data-align-text="center"] {
+  text-align: center;
+}
+
+[data-ui="surface"][data-align-text="right"] {
+  text-align: right;
+}
