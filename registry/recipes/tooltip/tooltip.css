@@ -26,9 +26,21 @@
               transform var(--duration-fast) var(--ease-default);
 }
 
+/* Default position (top) when no variant is specified */
+[data-ui="tooltip"]:not([data-variant]) [data-part="content"] {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px) scale(0.95);
+  margin-bottom: 4px;
+}
+
 [data-ui="tooltip"][data-state="visible"] [data-part="content"] {
   opacity: 1;
   transform: scale(1);
+}
+
+[data-ui="tooltip"]:not([data-variant])[data-state="visible"] [data-part="content"] {
+  transform: translateX(-50%) translateY(-4px) scale(1);
 }
 
 /* ── Arrow (::before pseudo-element) ── */
@@ -39,6 +51,13 @@
   height: 8px;
   background: var(--color-fg);
   transform: rotate(45deg);
+}
+
+/* Default arrow (top) when no variant */
+[data-ui="tooltip"]:not([data-variant]) [data-part="content"]::before {
+  bottom: -4px;
+  left: 50%;
+  margin-left: -4px;
 }
 
 /* ── Position: Top ── */

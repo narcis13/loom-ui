@@ -33,10 +33,14 @@
   const pendingEffects = new Set();
   let flushScheduled = false;
 
+  const reactiveMap = new WeakMap();
+  const ARRAY_MUTATORS = new Set(['push', 'pop', 'splice', 'shift', 'unshift', 'sort', 'reverse']);
+
   function reactive(obj) {
     if (obj.__isReactive) return obj;
+    if (reactiveMap.has(obj)) return reactiveMap.get(obj);
 
-    const deps = {};
+    const deps = Object.create(null);
 
     const proxy = new Proxy(obj, {
       get(target, key, receiver) {
@@ -50,7 +54,32 @@
           currentEffect._deps.add(deps[key]);
         }
 
-        return Reflect.get(target, key, receiver);
+        const value = Reflect.get(target, key, receiver);
+
+        // Intercept array mutation methods to trigger 'length' deps,
+        // since internal length updates bypass the setter's change check.
+        if (Array.isArray(target) && typeof value === 'function' && ARRAY_MUTATORS.has(key)) {
+          return function() {
+            const result = value.apply(target, arguments);
+            if (deps['length']) {
+              for (const eff of deps['length']) {
+                pendingEffects.add(eff);
+              }
+              scheduleFlush();
+            }
+            return result;
+          };
+        }
+
+        // Deep reactivity: wrap nested arrays and plain objects so that
+        // mutations like array.push() / array.splice() trigger effects.
+        if (value !== null && typeof value === 'object'
+            && !value.__isReactive
+            && (Array.isArray(value) || Object.getPrototypeOf(value) === Object.prototype)) {
+          return reactive(value);
+        }
+
+        return value;
       },
 
       set(target, key, value, receiver) {
@@ -68,6 +97,7 @@
       }
     });
 
+    reactiveMap.set(obj, proxy);
     return proxy;
   }
 
@@ -433,7 +463,13 @@
       }
     });
 
-    var scope = reactive(Object.assign(Object.create(magics), data));
+    // Use defineProperties instead of Object.assign to preserve getters/setters
+    // (Object.assign invokes getters and copies the result as a static value).
+    var target = Object.create(magics);
+    var descriptors = Object.getOwnPropertyDescriptors(data);
+    Object.defineProperties(target, descriptors);
+
+    var scope = reactive(target);
     return scope;
   }
 
@@ -803,11 +839,12 @@
     if (isLoomSwitch) {
       var cl = effect(function() {
         var value = evaluate(prop, scope, el);
+        el.checked = !!value;
         el.dataset.state = value ? 'on' : 'off';
         el.setAttribute('aria-checked', value ? 'true' : 'false');
       });
-      el.addEventListener('click', function() {
-        evaluateAssignment(prop + ' = !' + prop, scope, el);
+      el.addEventListener('change', function() {
+        evaluateAssignment(prop + ' = ' + el.checked, scope, el);
       });
       addCleanup(el, cl);
 
@@ -1004,21 +1041,33 @@
         var nodes = [].slice.call(clone.childNodes).filter(function(n) { return n.nodeType === 1; });
 
         for (var j = 0; j < nodes.length; j++) {
-          var childObj = {};
-          childObj[itemName] = items[i];
-          childObj[indexName] = i;
+          var childOwn = Object.create(null);
+          childOwn[itemName] = items[i];
+          childOwn[indexName] = i;
 
-          // Copy parent scope's own data so child can read and write independently
-          var parentTarget = scope.__target || scope;
-          var parentKeys = Object.keys(parentTarget);
-          for (var pk = 0; pk < parentKeys.length; pk++) {
-            var pkey = parentKeys[pk];
-            if (!(pkey in childObj)) {
-              childObj[pkey] = parentTarget[pkey];
-            }
-          }
-
-          var childScope = reactive(childObj);
+          // Delegating child scope: reads/writes of parent properties go
+          // through the parent scope so that mutations trigger reactivity.
+          var childScope = (function(own, parentScope) {
+            return new Proxy(own, {
+              get: function(target, key) {
+                if (key === '__isReactive') return true;
+                if (key === '__target') return target;
+                if (key === '__deps') return parentScope.__deps;
+                return (key in target) ? target[key] : parentScope[key];
+              },
+              set: function(target, key, value) {
+                if (key in target) {
+                  target[key] = value;
+                } else {
+                  parentScope[key] = value;
+                }
+                return true;
+              },
+              has: function(target, key) {
+                return (key in target) || (key in parentScope);
+              }
+            });
+          })(childOwn, scope);
           nodes[j].__loomScope = childScope;
           nodes[j].__loomCleanups = [];
 
