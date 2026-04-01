@@ -55,6 +55,15 @@
   <link rel="stylesheet" href="../registry/recipes/dropdown/dropdown.css">
   <link rel="stylesheet" href="../registry/recipes/tooltip/tooltip.css">
   <link rel="stylesheet" href="../registry/recipes/toast/toast.css">
+  <link rel="stylesheet" href="../registry/recipes/date-picker/date-picker.css">
+  <link rel="stylesheet" href="../registry/recipes/combobox/combobox.css">
+  <link rel="stylesheet" href="../registry/recipes/command-palette/command-palette.css">
+  <link rel="stylesheet" href="../registry/recipes/popover/popover.css">
+  <link rel="stylesheet" href="../registry/recipes/pagination/pagination.css">
+  <link rel="stylesheet" href="../registry/recipes/select-custom/select-custom.css">
+  <link rel="stylesheet" href="../registry/recipes/sheet/sheet.css">
+  <link rel="stylesheet" href="../registry/recipes/drawer/drawer.css">
+  <link rel="stylesheet" href="../registry/recipes/table/table.css">
 
   <!-- Loom Core -->
   <script src="../registry/core/loom-core.js" defer></script>
@@ -603,6 +612,651 @@
             <div data-ui="tooltip">
               <button data-part="trigger" data-ui="button" data-variant="outline">Hover me</button>
               <div data-part="content" role="tooltip">This is a tooltip</div>
+            </div>
+          </div>
+        </div>
+
+        <div data-ui="separator"></div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- TOAST (Recipe)                           -->
+        <!-- ════════════════════════════════════════ -->
+        <div data-ui="stack" data-gap="4">
+          <h2 data-ui="heading" data-size="3">Toast</h2>
+          <p data-ui="text" data-variant="muted">Auto-dismissing notifications with tone variants. Recipe component.</p>
+
+          <div data-ui="stack" data-variant="horizontal" data-gap="2" data-wrap>
+            <button data-ui="button" data-variant="outline" data-size="sm"
+              onclick="document.getElementById('demo-toast-container')._loomToast.add({message:'This is a default toast', icon:'&#x2139;'})">
+              Default Toast
+            </button>
+            <button data-ui="button" data-variant="primary" data-size="sm"
+              onclick="document.getElementById('demo-toast-container')._loomToast.add({message:'Action completed!', tone:'success', icon:'&#x2713;'})">
+              Success Toast
+            </button>
+            <button data-ui="button" data-variant="destructive" data-size="sm"
+              onclick="document.getElementById('demo-toast-container')._loomToast.add({message:'Something went wrong.', tone:'error', icon:'&#x2717;'})">
+              Error Toast
+            </button>
+            <button data-ui="button" data-variant="outline" data-size="sm"
+              onclick="document.getElementById('demo-toast-container')._loomToast.add({message:'Check your input.', tone:'warning', icon:'&#x26A0;'})">
+              Warning Toast
+            </button>
+          </div>
+
+          <div data-ui="toast" data-variant="top-right" data-part="container" role="region" aria-label="Notifications" id="demo-toast-container">
+            <!-- Toasts are appended here dynamically via JS -->
+          </div>
+        </div>
+
+        <div data-ui="separator"></div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- POPOVER (Recipe)                         -->
+        <!-- ════════════════════════════════════════ -->
+        <div data-ui="stack" data-gap="4">
+          <h2 data-ui="heading" data-size="3">Popover</h2>
+          <p data-ui="text" data-variant="muted">Content popup anchored to a trigger with click toggle. Recipe component.</p>
+
+          <div data-ui="stack" data-variant="horizontal" data-gap="4" data-wrap>
+            <div data-ui="popover" data-state="closed">
+              <button data-part="trigger" data-ui="button" data-variant="outline">Bottom (default)</button>
+              <div data-part="content" data-variant="bottom" hidden>
+                <div data-ui="stack" data-gap="2">
+                  <p data-ui="text" data-size="sm" data-weight="medium">Popover Content</p>
+                  <p data-ui="text" data-size="sm" data-variant="muted">This popover appears below the trigger. Click outside or press Escape to close.</p>
+                </div>
+              </div>
+            </div>
+
+            <div data-ui="popover" data-state="closed">
+              <button data-part="trigger" data-ui="button" data-variant="outline">Top</button>
+              <div data-part="content" data-variant="top" hidden>
+                <div data-ui="stack" data-gap="2">
+                  <p data-ui="text" data-size="sm" data-weight="medium">Top Popover</p>
+                  <p data-ui="text" data-size="sm" data-variant="muted">Positioned above the trigger element.</p>
+                </div>
+              </div>
+            </div>
+
+            <div data-ui="popover" data-state="closed">
+              <button data-part="trigger" data-ui="button" data-variant="outline">Right</button>
+              <div data-part="content" data-variant="right" hidden>
+                <div data-ui="stack" data-gap="2">
+                  <p data-ui="text" data-size="sm" data-weight="medium">Right Popover</p>
+                  <p data-ui="text" data-size="sm" data-variant="muted">Positioned to the right.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div data-ui="separator"></div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- DATE PICKER (Recipe)                     -->
+        <!-- ════════════════════════════════════════ -->
+        <div data-ui="stack" data-gap="4">
+          <h2 data-ui="heading" data-size="3">Date Picker</h2>
+          <p data-ui="text" data-variant="muted">Date input with calendar dropdown. Recipe component.</p>
+
+          <div data-ui="grid" data-cols="3" data-gap="4">
+            <div data-ui="stack" data-gap="2">
+              <label data-ui="label">Pick a date</label>
+              <div data-ui="date-picker" data-state="closed">
+                <div data-part="trigger">
+                  <input data-part="input" type="text" placeholder="Select a date" readonly aria-haspopup="dialog" aria-expanded="false" aria-label="Choose date">
+                  <span data-part="icon" aria-hidden="true">&#x1F4C5;</span>
+                </div>
+                <div data-part="calendar" role="dialog" aria-label="Date picker" hidden>
+                  <div data-part="header">
+                    <button data-part="nav-prev" aria-label="Previous month">&lsaquo;</button>
+                    <span data-part="month-label"></span>
+                    <button data-part="nav-next" aria-label="Next month">&rsaquo;</button>
+                  </div>
+                  <table data-part="grid" role="grid" aria-label="Calendar">
+                    <thead>
+                      <tr>
+                        <th scope="col" abbr="Sunday">Su</th>
+                        <th scope="col" abbr="Monday">Mo</th>
+                        <th scope="col" abbr="Tuesday">Tu</th>
+                        <th scope="col" abbr="Wednesday">We</th>
+                        <th scope="col" abbr="Thursday">Th</th>
+                        <th scope="col" abbr="Friday">Fr</th>
+                        <th scope="col" abbr="Saturday">Sa</th>
+                      </tr>
+                    </thead>
+                    <tbody data-part="grid-body"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div data-ui="stack" data-gap="2">
+              <label data-ui="label">Small size</label>
+              <div data-ui="date-picker" data-state="closed" data-size="sm">
+                <div data-part="trigger">
+                  <input data-part="input" type="text" placeholder="Date" readonly aria-haspopup="dialog" aria-expanded="false" aria-label="Choose date">
+                  <span data-part="icon" aria-hidden="true">&#x1F4C5;</span>
+                </div>
+                <div data-part="calendar" role="dialog" aria-label="Date picker" hidden>
+                  <div data-part="header">
+                    <button data-part="nav-prev" aria-label="Previous month">&lsaquo;</button>
+                    <span data-part="month-label"></span>
+                    <button data-part="nav-next" aria-label="Next month">&rsaquo;</button>
+                  </div>
+                  <table data-part="grid" role="grid" aria-label="Calendar">
+                    <thead>
+                      <tr>
+                        <th scope="col" abbr="Sunday">Su</th>
+                        <th scope="col" abbr="Monday">Mo</th>
+                        <th scope="col" abbr="Tuesday">Tu</th>
+                        <th scope="col" abbr="Wednesday">We</th>
+                        <th scope="col" abbr="Thursday">Th</th>
+                        <th scope="col" abbr="Friday">Fr</th>
+                        <th scope="col" abbr="Saturday">Sa</th>
+                      </tr>
+                    </thead>
+                    <tbody data-part="grid-body"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div data-ui="stack" data-gap="2">
+              <label data-ui="label">Large size</label>
+              <div data-ui="date-picker" data-state="closed" data-size="lg">
+                <div data-part="trigger">
+                  <input data-part="input" type="text" placeholder="Select a date" readonly aria-haspopup="dialog" aria-expanded="false" aria-label="Choose date">
+                  <span data-part="icon" aria-hidden="true">&#x1F4C5;</span>
+                </div>
+                <div data-part="calendar" role="dialog" aria-label="Date picker" hidden>
+                  <div data-part="header">
+                    <button data-part="nav-prev" aria-label="Previous month">&lsaquo;</button>
+                    <span data-part="month-label"></span>
+                    <button data-part="nav-next" aria-label="Next month">&rsaquo;</button>
+                  </div>
+                  <table data-part="grid" role="grid" aria-label="Calendar">
+                    <thead>
+                      <tr>
+                        <th scope="col" abbr="Sunday">Su</th>
+                        <th scope="col" abbr="Monday">Mo</th>
+                        <th scope="col" abbr="Tuesday">Tu</th>
+                        <th scope="col" abbr="Wednesday">We</th>
+                        <th scope="col" abbr="Thursday">Th</th>
+                        <th scope="col" abbr="Friday">Fr</th>
+                        <th scope="col" abbr="Saturday">Sa</th>
+                      </tr>
+                    </thead>
+                    <tbody data-part="grid-body"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div data-ui="separator"></div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- COMBOBOX (Recipe)                        -->
+        <!-- ════════════════════════════════════════ -->
+        <div data-ui="stack" data-gap="4">
+          <h2 data-ui="heading" data-size="3">Combobox</h2>
+          <p data-ui="text" data-variant="muted">Autocomplete input with filtered dropdown list. Recipe component.</p>
+
+          <div data-ui="grid" data-cols="2" data-gap="4">
+            <div data-ui="stack" data-gap="2">
+              <label data-ui="label">Select a framework</label>
+              <div data-ui="combobox" data-state="closed">
+                <input data-part="input" role="combobox" data-ui="input" placeholder="Search frameworks..." aria-expanded="false" aria-autocomplete="list">
+                <ul data-part="listbox" role="listbox" hidden>
+                  <li data-part="option" role="option">React</li>
+                  <li data-part="option" role="option">Vue</li>
+                  <li data-part="option" role="option">Angular</li>
+                  <li data-part="option" role="option">Svelte</li>
+                  <li data-part="option" role="option">Solid</li>
+                  <li data-part="option" role="option">Preact</li>
+                  <li data-part="empty" hidden>No results found</li>
+                </ul>
+              </div>
+            </div>
+
+            <div data-ui="stack" data-gap="2">
+              <label data-ui="label">Select a color</label>
+              <div data-ui="combobox" data-state="closed" data-size="sm">
+                <input data-part="input" role="combobox" data-ui="input" data-size="sm" placeholder="Search colors..." aria-expanded="false" aria-autocomplete="list">
+                <ul data-part="listbox" role="listbox" hidden>
+                  <li data-part="option" role="option">Red</li>
+                  <li data-part="option" role="option">Orange</li>
+                  <li data-part="option" role="option">Yellow</li>
+                  <li data-part="option" role="option">Green</li>
+                  <li data-part="option" role="option">Blue</li>
+                  <li data-part="option" role="option">Purple</li>
+                  <li data-part="empty" hidden>No results found</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div data-ui="separator"></div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- SELECT CUSTOM (Recipe)                   -->
+        <!-- ════════════════════════════════════════ -->
+        <div data-ui="stack" data-gap="4">
+          <h2 data-ui="heading" data-size="3">Select Custom</h2>
+          <p data-ui="text" data-variant="muted">Custom styled select dropdown with search filtering. Recipe component.</p>
+
+          <div data-ui="grid" data-cols="3" data-gap="4">
+            <div data-ui="stack" data-gap="2">
+              <label data-ui="label">Choose a fruit</label>
+              <div data-ui="select-custom" data-state="closed">
+                <button data-part="trigger" role="combobox" aria-expanded="false" aria-haspopup="listbox">
+                  <span data-part="value" data-placeholder>Select a fruit...</span>
+                  <span data-part="chevron">&#x25BE;</span>
+                </button>
+                <div data-part="listbox" role="listbox" hidden>
+                  <div data-part="option" role="option" data-value="apple">Apple</div>
+                  <div data-part="option" role="option" data-value="banana">Banana</div>
+                  <div data-part="option" role="option" data-value="cherry">Cherry</div>
+                  <div data-part="option" role="option" data-value="grape">Grape</div>
+                  <div data-part="option" role="option" data-value="mango">Mango</div>
+                </div>
+              </div>
+            </div>
+
+            <div data-ui="stack" data-gap="2">
+              <label data-ui="label">With search (sm)</label>
+              <div data-ui="select-custom" data-state="closed" data-size="sm">
+                <button data-part="trigger" role="combobox" aria-expanded="false" aria-haspopup="listbox">
+                  <span data-part="value" data-placeholder>Select country...</span>
+                  <span data-part="chevron">&#x25BE;</span>
+                </button>
+                <div data-part="listbox" role="listbox" hidden>
+                  <input data-part="search" data-ui="input" data-size="sm" placeholder="Search...">
+                  <div data-part="option" role="option" data-value="us">United States</div>
+                  <div data-part="option" role="option" data-value="uk">United Kingdom</div>
+                  <div data-part="option" role="option" data-value="de">Germany</div>
+                  <div data-part="option" role="option" data-value="fr">France</div>
+                  <div data-part="option" role="option" data-value="jp">Japan</div>
+                  <div data-part="empty" hidden>No results found</div>
+                </div>
+              </div>
+            </div>
+
+            <div data-ui="stack" data-gap="2">
+              <label data-ui="label">Large size</label>
+              <div data-ui="select-custom" data-state="closed" data-size="lg">
+                <button data-part="trigger" role="combobox" aria-expanded="false" aria-haspopup="listbox">
+                  <span data-part="value" data-placeholder>Pick a role...</span>
+                  <span data-part="chevron">&#x25BE;</span>
+                </button>
+                <div data-part="listbox" role="listbox" hidden>
+                  <div data-part="option" role="option" data-value="admin">Admin</div>
+                  <div data-part="option" role="option" data-value="editor">Editor</div>
+                  <div data-part="option" role="option" data-value="viewer">Viewer</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div data-ui="separator"></div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- TABLE (Recipe)                           -->
+        <!-- ════════════════════════════════════════ -->
+        <div data-ui="stack" data-gap="4">
+          <h2 data-ui="heading" data-size="3">Table</h2>
+          <p data-ui="text" data-variant="muted">Enhanced data table with sortable columns and selectable rows. Recipe component.</p>
+
+          <div data-ui="stack" data-gap="6">
+            <div data-ui="stack" data-gap="2">
+              <p data-ui="text" data-size="sm" data-weight="medium">Default with sortable columns</p>
+              <div data-ui="table">
+                <table data-part="table">
+                  <thead data-part="thead">
+                    <tr data-part="tr">
+                      <th data-part="th" scope="col">
+                        <input data-part="checkbox" type="checkbox" aria-label="Select all">
+                      </th>
+                      <th data-part="th" scope="col" data-sortable aria-sort="ascending">Name</th>
+                      <th data-part="th" scope="col" data-sortable aria-sort="none">Email</th>
+                      <th data-part="th" scope="col" data-sortable aria-sort="none">Role</th>
+                      <th data-part="th" scope="col">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody data-part="tbody">
+                    <tr data-part="tr">
+                      <td data-part="td"><input data-part="checkbox" type="checkbox" aria-label="Select row"></td>
+                      <td data-part="td">Alice Johnson</td>
+                      <td data-part="td">alice@example.com</td>
+                      <td data-part="td">Admin</td>
+                      <td data-part="td"><span data-ui="badge" data-variant="success">Active</span></td>
+                    </tr>
+                    <tr data-part="tr" data-selected>
+                      <td data-part="td"><input data-part="checkbox" type="checkbox" checked aria-label="Select row"></td>
+                      <td data-part="td">Bob Smith</td>
+                      <td data-part="td">bob@example.com</td>
+                      <td data-part="td">Editor</td>
+                      <td data-part="td"><span data-ui="badge" data-variant="success">Active</span></td>
+                    </tr>
+                    <tr data-part="tr">
+                      <td data-part="td"><input data-part="checkbox" type="checkbox" aria-label="Select row"></td>
+                      <td data-part="td">Carol White</td>
+                      <td data-part="td">carol@example.com</td>
+                      <td data-part="td">Viewer</td>
+                      <td data-part="td"><span data-ui="badge" data-variant="warning">Pending</span></td>
+                    </tr>
+                    <tr data-part="tr">
+                      <td data-part="td"><input data-part="checkbox" type="checkbox" aria-label="Select row"></td>
+                      <td data-part="td">David Lee</td>
+                      <td data-part="td">david@example.com</td>
+                      <td data-part="td">Editor</td>
+                      <td data-part="td"><span data-ui="badge" data-variant="destructive">Inactive</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div data-ui="grid" data-cols="2" data-gap="4">
+              <div data-ui="stack" data-gap="2">
+                <p data-ui="text" data-size="sm" data-weight="medium">Striped variant</p>
+                <div data-ui="table" data-variant="striped" data-size="sm">
+                  <table data-part="table">
+                    <thead data-part="thead">
+                      <tr data-part="tr">
+                        <th data-part="th" scope="col">Product</th>
+                        <th data-part="th" scope="col">Price</th>
+                        <th data-part="th" scope="col">Stock</th>
+                      </tr>
+                    </thead>
+                    <tbody data-part="tbody">
+                      <tr data-part="tr"><td data-part="td">Widget A</td><td data-part="td">$9.99</td><td data-part="td">142</td></tr>
+                      <tr data-part="tr"><td data-part="td">Widget B</td><td data-part="td">$14.99</td><td data-part="td">83</td></tr>
+                      <tr data-part="tr"><td data-part="td">Widget C</td><td data-part="td">$24.99</td><td data-part="td">27</td></tr>
+                      <tr data-part="tr"><td data-part="td">Widget D</td><td data-part="td">$4.99</td><td data-part="td">310</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div data-ui="stack" data-gap="2">
+                <p data-ui="text" data-size="sm" data-weight="medium">Bordered variant</p>
+                <div data-ui="table" data-variant="bordered" data-size="sm">
+                  <table data-part="table">
+                    <thead data-part="thead">
+                      <tr data-part="tr">
+                        <th data-part="th" scope="col">Metric</th>
+                        <th data-part="th" scope="col">Value</th>
+                        <th data-part="th" scope="col">Change</th>
+                      </tr>
+                    </thead>
+                    <tbody data-part="tbody">
+                      <tr data-part="tr"><td data-part="td">Users</td><td data-part="td">12,483</td><td data-part="td">+5.2%</td></tr>
+                      <tr data-part="tr"><td data-part="td">Revenue</td><td data-part="td">$84,200</td><td data-part="td">+12.1%</td></tr>
+                      <tr data-part="tr"><td data-part="td">Conversion</td><td data-part="td">3.2%</td><td data-part="td">-0.4%</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div data-ui="separator"></div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- PAGINATION (Recipe)                      -->
+        <!-- ════════════════════════════════════════ -->
+        <div data-ui="stack" data-gap="4">
+          <h2 data-ui="heading" data-size="3">Pagination</h2>
+          <p data-ui="text" data-variant="muted">Page navigation with numbered controls and ellipsis. Recipe component.</p>
+
+          <div data-ui="stack" data-gap="6">
+            <div data-ui="stack" data-gap="2">
+              <p data-ui="text" data-size="sm" data-weight="medium">Default</p>
+              <div data-ui="pagination">
+                <nav data-part="nav" role="navigation" aria-label="Pagination">
+                  <button data-part="prev" aria-label="Previous page" disabled>&larr; Prev</button>
+                  <button data-part="page" data-state="active" data-page="1" aria-current="page">1</button>
+                  <button data-part="page" data-page="2">2</button>
+                  <button data-part="page" data-page="3">3</button>
+                  <span data-part="ellipsis">&hellip;</span>
+                  <button data-part="page" data-page="12">12</button>
+                  <button data-part="next" aria-label="Next page">Next &rarr;</button>
+                </nav>
+              </div>
+            </div>
+
+            <div data-ui="stack" data-gap="2">
+              <p data-ui="text" data-size="sm" data-weight="medium">Small size — middle page active</p>
+              <div data-ui="pagination" data-size="sm">
+                <nav data-part="nav" role="navigation" aria-label="Pagination">
+                  <button data-part="prev" aria-label="Previous page">&larr; Prev</button>
+                  <button data-part="page" data-page="1">1</button>
+                  <span data-part="ellipsis">&hellip;</span>
+                  <button data-part="page" data-page="4">4</button>
+                  <button data-part="page" data-state="active" data-page="5" aria-current="page">5</button>
+                  <button data-part="page" data-page="6">6</button>
+                  <span data-part="ellipsis">&hellip;</span>
+                  <button data-part="page" data-page="20">20</button>
+                  <button data-part="next" aria-label="Next page">Next &rarr;</button>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div data-ui="separator"></div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- COMMAND PALETTE (Recipe)                 -->
+        <!-- ════════════════════════════════════════ -->
+        <div data-ui="stack" data-gap="4">
+          <h2 data-ui="heading" data-size="3">Command Palette</h2>
+          <p data-ui="text" data-variant="muted">Cmd+K style modal with search and keyboard navigation. Recipe component.</p>
+
+          <div data-ui="command-palette" data-state="closed" id="demo-command-palette">
+            <button data-ui="button" data-variant="outline" onclick="this.parentElement.setAttribute('data-state','open'); this.parentElement.querySelector('[data-part=search]')?.focus()">
+              Open Command Palette
+              <kbd data-ui="kbd">&#x2318;K</kbd>
+            </button>
+            <div data-part="overlay" hidden></div>
+            <div data-part="panel" role="dialog" aria-modal="true" aria-label="Command palette" hidden>
+              <div data-part="search-wrapper">
+                <input data-part="search" role="combobox" placeholder="Type a command or search..." aria-expanded="true" aria-autocomplete="list">
+              </div>
+              <div data-part="list" role="listbox">
+                <div data-part="group">
+                  <div data-part="group-label">Navigation</div>
+                  <div data-part="item" role="option">
+                    <span data-part="item-label">Go to Dashboard</span>
+                    <kbd data-part="kbd">G D</kbd>
+                  </div>
+                  <div data-part="item" role="option">
+                    <span data-part="item-label">Go to Settings</span>
+                    <kbd data-part="kbd">G S</kbd>
+                  </div>
+                  <div data-part="item" role="option">
+                    <span data-part="item-label">Go to Components</span>
+                    <kbd data-part="kbd">G C</kbd>
+                  </div>
+                </div>
+                <div data-part="group">
+                  <div data-part="group-label">Actions</div>
+                  <div data-part="item" role="option">
+                    <span data-part="item-label">Create New Project</span>
+                    <kbd data-part="kbd">&#x2318;N</kbd>
+                  </div>
+                  <div data-part="item" role="option">
+                    <span data-part="item-label">Toggle Dark Mode</span>
+                    <kbd data-part="kbd">&#x2318;D</kbd>
+                  </div>
+                  <div data-part="item" role="option">
+                    <span data-part="item-label">Search Documentation</span>
+                    <kbd data-part="kbd">&#x2318;/</kbd>
+                  </div>
+                </div>
+                <div data-part="empty" hidden>No commands found</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div data-ui="separator"></div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- DRAWER (Recipe)                          -->
+        <!-- ════════════════════════════════════════ -->
+        <div data-ui="stack" data-gap="4">
+          <h2 data-ui="heading" data-size="3">Drawer</h2>
+          <p data-ui="text" data-variant="muted">Side panel that slides in from the left or right. Recipe component.</p>
+
+          <div data-ui="stack" data-variant="horizontal" data-gap="3" data-wrap>
+            <div data-ui="drawer" data-state="closed" id="demo-drawer-left">
+              <button data-part="trigger" data-ui="button" data-variant="outline">Open Left Drawer</button>
+              <div data-part="overlay" hidden></div>
+              <div data-part="panel" data-variant="left" role="dialog" aria-modal="true" aria-labelledby="demo-drawer-left-title" hidden>
+                <div data-part="header">
+                  <h2 id="demo-drawer-left-title" data-part="title">Navigation</h2>
+                  <button data-part="close" aria-label="Close drawer">&#x2715;</button>
+                </div>
+                <div data-part="body">
+                  <nav data-ui="nav" data-variant="vertical" aria-label="Drawer nav">
+                    <button data-part="link" data-state="active">Dashboard</button>
+                    <button data-part="link">Projects</button>
+                    <button data-part="link">Team</button>
+                    <div data-part="separator"></div>
+                    <button data-part="link">Settings</button>
+                  </nav>
+                </div>
+                <div data-part="footer">
+                  <button data-ui="button" data-variant="outline" data-size="sm">Log Out</button>
+                </div>
+              </div>
+            </div>
+
+            <div data-ui="drawer" data-state="closed" id="demo-drawer-right">
+              <button data-part="trigger" data-ui="button" data-variant="outline">Open Right Drawer</button>
+              <div data-part="overlay" hidden></div>
+              <div data-part="panel" data-variant="right" data-size="lg" role="dialog" aria-modal="true" aria-labelledby="demo-drawer-right-title" hidden>
+                <div data-part="header">
+                  <h2 id="demo-drawer-right-title" data-part="title">User Details</h2>
+                  <button data-part="close" aria-label="Close drawer">&#x2715;</button>
+                </div>
+                <div data-part="body">
+                  <div data-ui="stack" data-gap="4">
+                    <div data-ui="stack" data-variant="horizontal" data-gap="3" data-align="center">
+                      <div data-ui="avatar" data-size="lg"><span data-part="fallback">AJ</span></div>
+                      <div data-ui="stack" data-gap="1">
+                        <p data-ui="text" data-weight="medium">Alice Johnson</p>
+                        <p data-ui="text" data-size="sm" data-variant="muted">alice@example.com</p>
+                      </div>
+                    </div>
+                    <div data-ui="separator"></div>
+                    <div data-ui="stack" data-gap="2">
+                      <label data-ui="label">Display Name</label>
+                      <input data-ui="input" value="Alice Johnson">
+                    </div>
+                    <div data-ui="stack" data-gap="2">
+                      <label data-ui="label">Bio</label>
+                      <textarea data-ui="textarea" rows="3">Full-stack developer and UI enthusiast.</textarea>
+                    </div>
+                  </div>
+                </div>
+                <div data-part="footer">
+                  <button data-ui="button" data-variant="outline">Cancel</button>
+                  <button data-ui="button" data-variant="primary">Save</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div data-ui="separator"></div>
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- SHEET (Recipe)                           -->
+        <!-- ════════════════════════════════════════ -->
+        <div data-ui="stack" data-gap="4">
+          <h2 data-ui="heading" data-size="3">Sheet</h2>
+          <p data-ui="text" data-variant="muted">Mobile-friendly bottom or side sheet. Recipe component.</p>
+
+          <div data-ui="stack" data-variant="horizontal" data-gap="3" data-wrap>
+            <div data-ui="sheet" data-state="closed" id="demo-sheet-bottom">
+              <button data-part="trigger" data-ui="button" data-variant="outline">Bottom Sheet</button>
+              <div data-part="overlay" hidden></div>
+              <div data-part="panel" data-variant="bottom" role="dialog" aria-modal="true" aria-labelledby="demo-sheet-bottom-title" hidden>
+                <div data-part="header">
+                  <h2 id="demo-sheet-bottom-title" data-part="title">Filters</h2>
+                  <button data-part="close" aria-label="Close sheet">&#x2715;</button>
+                </div>
+                <div data-part="body">
+                  <div data-ui="stack" data-gap="3">
+                    <div data-ui="stack" data-gap="2">
+                      <label data-ui="label">Category</label>
+                      <select data-ui="select">
+                        <option>All Categories</option>
+                        <option>Design</option>
+                        <option>Development</option>
+                        <option>Marketing</option>
+                      </select>
+                    </div>
+                    <div data-ui="stack" data-gap="2">
+                      <label data-ui="label">Sort by</label>
+                      <div data-ui="radio-group">
+                        <label data-ui="radio-label"><input data-ui="radio" type="radio" name="sheet-sort" checked> Newest</label>
+                        <label data-ui="radio-label"><input data-ui="radio" type="radio" name="sheet-sort"> Popular</label>
+                        <label data-ui="radio-label"><input data-ui="radio" type="radio" name="sheet-sort"> Price</label>
+                      </div>
+                    </div>
+                    <button data-ui="button" data-variant="primary">Apply Filters</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div data-ui="sheet" data-state="closed" id="demo-sheet-right">
+              <button data-part="trigger" data-ui="button" data-variant="outline">Right Sheet</button>
+              <div data-part="overlay" hidden></div>
+              <div data-part="panel" data-variant="right" role="dialog" aria-modal="true" aria-labelledby="demo-sheet-right-title" hidden>
+                <div data-part="header">
+                  <h2 id="demo-sheet-right-title" data-part="title">Notifications</h2>
+                  <button data-part="close" aria-label="Close sheet">&#x2715;</button>
+                </div>
+                <div data-part="body">
+                  <div data-ui="stack" data-gap="3">
+                    <div data-ui="card" data-variant="filled">
+                      <div data-part="body">
+                        <div data-ui="stack" data-gap="1">
+                          <p data-ui="text" data-size="sm" data-weight="medium">New comment on your PR</p>
+                          <p data-ui="text" data-size="xs" data-variant="muted">2 minutes ago</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div data-ui="card" data-variant="filled">
+                      <div data-part="body">
+                        <div data-ui="stack" data-gap="1">
+                          <p data-ui="text" data-size="sm" data-weight="medium">Build succeeded</p>
+                          <p data-ui="text" data-size="xs" data-variant="muted">15 minutes ago</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div data-ui="card" data-variant="filled">
+                      <div data-part="body">
+                        <div data-ui="stack" data-gap="1">
+                          <p data-ui="text" data-size="sm" data-weight="medium">You were mentioned in #general</p>
+                          <p data-ui="text" data-size="xs" data-variant="muted">1 hour ago</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
