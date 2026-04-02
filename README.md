@@ -1,16 +1,49 @@
 # Loom UI
 
-> A manifest-guided, zero-class UI framework. Built for AI agents to generate, inspect, and repair — and for humans to fully own.
+> Agent-native UI framework. Manifest-driven, zero-class, zero-dependency.
+> Built for AI agents to generate, inspect, and repair — and for developers to fully own.
 
-**No classes. No build step. No runtime dependencies. Just data attributes, design tokens, and machine-readable manifests.**
+**No classes. No build step. No runtime dependencies.**
+**Just data attributes, design tokens, and machine-readable manifests.**
+
+```
+The CSS is the component.
+The JSON manifest is the documentation.
+The AI is the compiler.
+The CLI is the conductor.
+```
 
 ---
 
-## Why No Classes?
+## Table of Contents
 
-Traditional UI frameworks rely on class names for styling: `.btn`, `.btn-primary`, `.card-header`. This creates naming collisions, specificity wars, and markup that no machine can reliably parse.
+- [Why Loom?](#why-loom)
+- [Quick Start](#quick-start)
+- [The Attribute Protocol](#the-attribute-protocol)
+- [Component Library](#component-library)
+- [Layout System](#layout-system)
+- [Design Token System](#design-token-system)
+- [Theme System](#theme-system)
+- [Loom Core — Reactive Engine](#loom-core--reactive-engine)
+- [The Manifest System](#the-manifest-system)
+- [JavaScript Controllers](#javascript-controllers)
+- [CLI Reference](#cli-reference)
+- [CSS Bundle](#css-bundle)
+- [Audit and Repair](#audit-and-repair)
+- [Scaffolding and Code Generation](#scaffolding-and-code-generation)
+- [AI Agent Integration](#ai-agent-integration)
+- [CSS Conventions](#css-conventions)
+- [Project Structure](#project-structure)
+- [Development](#development)
+- [License](#license)
 
-Loom replaces all of it with a five-attribute protocol:
+---
+
+## Why Loom?
+
+Traditional UI frameworks use class names: `.btn`, `.btn-primary`, `.card-header`. This creates naming collisions, specificity wars, and markup that no machine can reliably parse. A class name is ambiguous — is `.active` a state, a variant, or a layout helper?
+
+Loom replaces all of it with a five-attribute protocol where every attribute has a single, unambiguous purpose:
 
 ```html
 <!-- Traditional -->
@@ -20,65 +53,81 @@ Loom replaces all of it with a five-attribute protocol:
 <button data-ui="button" data-variant="primary" data-size="lg" data-state="loading">Save</button>
 ```
 
-Every attribute has a single purpose. Every component is machine-readable. Every variant is auditable. The CSS targets data attributes — never classes.
+Every component is machine-readable. Every variant is auditable. Every state change is traceable. The CSS targets data attributes — never classes.
 
----
+This makes Loom **agent-native**: AI coding agents can read manifests, generate valid markup, audit it against contracts, and auto-repair violations. But it's equally good for developers — you get a complete component library, a dev server, CSS bundling, and full ownership of every file.
 
-## Table of Contents
+### What Loom Is NOT
 
-- [Quick Start](#quick-start)
-- [The Attribute Protocol](#the-attribute-protocol)
-- [Layout Without Classes](#layout-without-classes)
-- [Components](#components)
-- [Design Token System](#design-token-system)
-- [Theme System](#theme-system)
-- [Loom Core — Reactive Directives](#loom-core--reactive-directives)
-- [The Manifest System](#the-manifest-system)
-- [JavaScript Controllers](#javascript-controllers)
-- [CLI Reference](#cli-reference)
-- [Audit and Repair](#audit-and-repair)
-- [CSS Conventions](#css-conventions)
-- [Project Structure](#project-structure)
-- [Development](#development)
-- [Tech Stack](#tech-stack)
-- [License](#license)
+- Not a JavaScript framework (no virtual DOM, no JSX, no compile step)
+- Not a utility-first CSS library (not Tailwind)
+- Not a package you import at runtime (no `node_modules` dependency)
+- Not a design system only for humans to browse — it's a design system for agents to parse and developers to own
 
 ---
 
 ## Quick Start
 
+### Prerequisites
+
+- [Bun](https://bun.sh) runtime
+
+### Install and Initialize
+
 ```bash
-# Clone and install
-git clone <repo-url>
-cd loom-ui
-bun install
+# Install globally (or use npx)
+bun install -g @loom-ui/cli
 
 # Initialize a new project
-bun run src/index.ts init
+loom init
 
 # Add components
-bun run src/index.ts add button input card dialog tabs stack grid surface
+loom add button input card dialog tabs stack grid surface
 
-# Audit your markup
-bun run src/index.ts audit
-
-# Auto-fix issues
-bun run src/index.ts repair
+# Start dev server
+loom dev
 ```
 
-After `init`, your project contains:
+### What `loom init` Creates
 
 ```
-ui/
-├── tokens/       Design tokens (CSS custom properties)
-├── base/         Reset and prose styles
-├── core/         Reactive engine + recipe controllers
-├── primitives/   CSS-only components
-├── recipes/      CSS + JS interactive components
-└── patterns/     Page-level compositions
-
-loom.config.json  Project configuration
+your-project/
+├── ui/
+│   ├── tokens/          Design tokens (CSS custom properties)
+│   ├── base/            CSS reset and prose styles
+│   ├── core/            Reactive engine + recipe controllers
+│   ├── primitives/      (empty — add components with `loom add`)
+│   ├── recipes/         (empty — add components with `loom add`)
+│   ├── patterns/        (empty — add components with `loom add`)
+│   └── loom.bundle.css  Single CSS bundle (auto-generated)
+├── loom.config.json     Project configuration
+└── .loom/
+    └── context.json     AI agent context (auto-generated)
 ```
+
+### Use in HTML
+
+After adding components, include one CSS file and the reactive engine:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="ui/loom.bundle.css">
+  <script src="ui/core/loom-core.js" defer></script>
+</head>
+<body>
+  <div data-ui="surface" data-variant="flat" data-size="lg">
+    <div data-ui="stack" data-gap="6">
+      <h1>Hello Loom</h1>
+      <button data-ui="button" data-variant="primary">Get Started</button>
+    </div>
+  </div>
+</body>
+</html>
+```
+
+One `<link>` tag. One `<script>` tag. That's the entire framework inclusion.
 
 ---
 
@@ -86,38 +135,110 @@ loom.config.json  Project configuration
 
 Five data attributes form the stable DOM contract between HTML, CSS, JavaScript, and AI agents.
 
-| Attribute | Purpose | Example |
-|-----------|---------|---------|
-| `data-ui` | Component identity | `data-ui="button"` |
-| `data-part` | Slot role within parent | `data-part="trigger"` |
-| `data-state` | Runtime state (JS-modified) | `data-state="open"` |
-| `data-variant` | Visual variant (set once) | `data-variant="destructive"` |
-| `data-size` | Size variant | `data-size="lg"` |
+| Attribute | Purpose | Set By | Example |
+|-----------|---------|--------|---------|
+| `data-ui` | Component identity | Markup | `data-ui="button"` |
+| `data-part` | Named slot within parent | Markup | `data-part="trigger"` |
+| `data-state` | Runtime state | JavaScript only | `data-state="open"` |
+| `data-variant` | Visual variant | Markup (set once) | `data-variant="primary"` |
+| `data-size` | Size variant | Markup (set once) | `data-size="lg"` |
 
 ### Rules
 
-1. `data-ui` goes on the root element of every component.
-2. `data-part` identifies child slots within a parent component.
-3. `data-state` is the **only** attribute JS controllers modify. CSS reacts to it.
-4. `data-variant` and `data-size` are set in markup and rarely change.
-5. Components **never** use class names. State lives in `data-state`. Identity lives in `data-ui`.
+1. `data-ui` goes on the **root element** of every component instance.
+2. `data-part` identifies **child slots** within a parent component.
+3. `data-state` is the **only** attribute JavaScript controllers modify. CSS reacts to it.
+4. `data-variant` and `data-size` are set in markup and rarely change at runtime.
+5. Components **never** use CSS class names. State lives in `data-state`. Identity lives in `data-ui`.
 6. Standard HTML attributes (`role`, `aria-*`, `hidden`, `disabled`) work alongside data attributes.
 
-### CSS Targeting
+### How CSS Targets the Protocol
 
 ```css
-[data-ui="button"] { }                                    /* base */
-[data-ui="button"][data-variant="primary"] { }             /* variant */
-[data-ui="button"][data-size="lg"] { }                     /* size */
-[data-ui="dialog"][data-state="open"] [data-part="panel"] { }  /* state */
-[data-ui="dialog"] [data-part="overlay"] { }               /* scoped part */
+[data-ui="button"] { }                                         /* base styles */
+[data-ui="button"][data-variant="primary"] { }                  /* variant */
+[data-ui="button"][data-size="lg"] { }                          /* size */
+[data-ui="dialog"][data-state="open"] [data-part="panel"] { }   /* state + part */
+[data-ui="card"] [data-part="header"] { }                       /* scoped part */
 ```
+
+No specificity wars. No naming conventions to memorize. The selector **is** the documentation.
 
 ---
 
-## Layout Without Classes
+## Component Library
 
-Three layout primitives replace CSS classes for page structure:
+Loom ships 43 components across three layers, from simple CSS-only primitives to full interactive recipes and page-level patterns.
+
+### Primitives (22 components) — CSS Only
+
+Pure CSS components. No JavaScript required. Drop in the HTML and it works.
+
+| Component | Description | Variants |
+|-----------|-------------|----------|
+| `button` | Action trigger | primary, secondary, destructive, ghost, outline, link + sm/md/lg |
+| `input` | Text input field | error, disabled states |
+| `textarea` | Multi-line text | error, disabled states |
+| `select` | Native select dropdown | error, disabled states |
+| `checkbox` | Form checkbox | checked, indeterminate |
+| `radio` | Radio button | checked state |
+| `switch` | Toggle switch | checked state |
+| `label` | Form label | required indicator |
+| `card` | Container with slots | header, body, footer parts |
+| `badge` | Status indicator | primary, secondary, success, warning, destructive |
+| `avatar` | Profile image/initials | sm, md, lg sizes |
+| `separator` | Horizontal/vertical divider | horizontal (default), vertical |
+| `spinner` | Loading animation | sm, md, lg sizes |
+| `kbd` | Keyboard key display | — |
+| `progress` | Progress bar | determinate, indeterminate |
+| `stepper` | Multi-step indicator | active, completed states |
+| `empty-state` | Placeholder for empty content | — |
+| `nav` | Navigation container | — |
+| `text` | Text with semantic styles | muted, sm/lg/xl sizes |
+| `stack` | Flexbox layout | vertical (default), horizontal |
+| `grid` | CSS Grid layout | 1–12 columns, responsive |
+| `surface` | Container with elevation | flat, raised, overlay |
+
+### Recipes (15 components) — CSS + JavaScript
+
+Interactive components with JavaScript controllers. Auto-initialize when `loom-core.js` is loaded.
+
+| Component | Description | Key Features |
+|-----------|-------------|-------------|
+| `dialog` | Modal dialog | Focus trap, escape-to-close, ARIA modal |
+| `drawer` | Side panel | Slides from left/right, overlay |
+| `sheet` | Full/partial overlay panel | Bottom sheet pattern |
+| `dropdown` | Action menu | Keyboard navigation, click-outside-close |
+| `popover` | Floating content | Positioned relative to trigger |
+| `tooltip` | Hover information | Delay, positioning |
+| `tabs` | Tab panel switcher | Arrow key navigation, ARIA tabs |
+| `accordion` | Expandable sections | Single/multi open modes |
+| `combobox` | Searchable select | Filtering, keyboard selection |
+| `select-custom` | Custom-styled select | Full keyboard support |
+| `command-palette` | Command menu (Cmd+K) | Fuzzy search, sections |
+| `table` | Data table | Sortable columns, row selection |
+| `pagination` | Page navigation | Previous/next, page numbers |
+| `toast` | Notification messages | Auto-dismiss, stacking |
+| `date-picker` | Calendar date selection | Month navigation, range selection |
+
+### Patterns (6 compositions) — No Custom JS
+
+Pre-built page-level compositions that combine primitives and recipes.
+
+| Pattern | Composes |
+|---------|----------|
+| `auth-form` | card, input, button, separator, label |
+| `dashboard-shell` | card, grid, avatar, dropdown, button, nav |
+| `settings-page` | tabs, card, input, switch, button |
+| `crud-table` | table, button, dropdown, dialog, pagination |
+| `empty-state` | button, card |
+| `search-results` | grid, input, button, badge, pagination |
+
+---
+
+## Layout System
+
+Three layout primitives replace CSS utility classes for page structure. No `.container`, `.row`, `.col-6` — just components.
 
 ### Stack — Flex Container
 
@@ -135,12 +256,18 @@ Three layout primitives replace CSS classes for page structure:
 </div>
 ```
 
-Options: `data-gap="0|1|2|3|4|6|8"`, `data-align="start|center|end|stretch"`, `data-variant="horizontal"`
+| Attribute | Values |
+|-----------|--------|
+| `data-gap` | `0`, `1`, `2`, `3`, `4`, `6`, `8` |
+| `data-align` | `start`, `center`, `end`, `stretch` |
+| `data-justify` | `start`, `center`, `end`, `between` |
+| `data-variant` | `horizontal` |
+| `data-wrap` | (boolean attribute) |
 
 ### Grid — Column Layout
 
 ```html
-<!-- Three-column grid -->
+<!-- Three-column grid, responsive -->
 <div data-ui="grid" data-cols="3" data-gap="4">
   <div data-ui="card">...</div>
   <div data-ui="card">...</div>
@@ -148,26 +275,42 @@ Options: `data-gap="0|1|2|3|4|6|8"`, `data-align="start|center|end|stretch"`, `d
 </div>
 ```
 
-Options: `data-cols="1|2|3|4|6|12"`, `data-gap="2|4|6|8"`. Auto-stacks to 1 column on screens under 640px.
+| Attribute | Values |
+|-----------|--------|
+| `data-cols` | `1`, `2`, `3`, `4`, `6`, `12` |
+| `data-cols-sm` | Override columns below 640px |
+| `data-gap` | `2`, `4`, `6`, `8` |
+
+Auto-stacks to 1 column on screens under 640px by default.
 
 ### Surface — Container
 
 ```html
-<!-- Padded container with elevation -->
 <div data-ui="surface" data-variant="raised" data-size="lg">
   Content with padding and shadow
 </div>
 ```
 
-Options: `data-variant="flat|raised|overlay"`, `data-size="sm|md|lg"`
+| Attribute | Values |
+|-----------|--------|
+| `data-variant` | `flat`, `raised`, `overlay` |
+| `data-size` | `sm`, `md`, `lg` |
+| `data-max` | `sm`, `md`, `lg`, `xl` (max-width) |
 
 ### Composing Layouts
 
 ```html
-<div data-ui="surface" data-size="lg" style="max-width: 1200px; margin: 0 auto">
+<div data-ui="surface" data-size="lg" data-max="xl" style="margin: 0 auto">
   <div data-ui="stack" data-gap="8">
 
-    <div data-ui="grid" data-cols="3" data-gap="4">
+    <!-- Header -->
+    <div data-ui="stack" data-variant="horizontal" data-align="center" data-justify="between">
+      <h1>Dashboard</h1>
+      <button data-ui="button" data-variant="primary">New Item</button>
+    </div>
+
+    <!-- Card grid -->
+    <div data-ui="grid" data-cols="3" data-gap="4" data-cols-sm="1">
       <div data-ui="card">
         <div data-part="body">Card one</div>
       </div>
@@ -179,6 +322,7 @@ Options: `data-variant="flat|raised|overlay"`, `data-size="sm|md|lg"`
       </div>
     </div>
 
+    <!-- Actions -->
     <div data-ui="stack" data-variant="horizontal" data-gap="3" data-align="center">
       <button data-ui="button" data-variant="outline">Cancel</button>
       <button data-ui="button" data-variant="primary">Save</button>
@@ -188,72 +332,15 @@ Options: `data-variant="flat|raised|overlay"`, `data-size="sm|md|lg"`
 </div>
 ```
 
-No classes. Layout is expressed through component composition and data attributes.
-
----
-
-## Components
-
-### Primitives (CSS Only)
-
-| Component | Description |
-|-----------|-------------|
-| `button` | 6 variants (primary, secondary, destructive, ghost, outline, link), 3 sizes |
-| `input` | Text input with error/disabled states |
-| `textarea` | Multi-line text input |
-| `select` | Native select element |
-| `checkbox` | Form checkbox |
-| `radio` | Radio button |
-| `switch` | Toggle switch |
-| `label` | Form label |
-| `card` | Container with header/body/footer slots |
-| `badge` | Status label with color variants |
-| `avatar` | Circular profile image with fallback |
-| `separator` | Horizontal/vertical divider |
-| `spinner` | Loading animation |
-| `kbd` | Keyboard key display |
-| `stack` | Flexbox layout (vertical/horizontal) |
-| `grid` | CSS Grid layout (1–12 columns) |
-| `surface` | Container with elevation and padding |
-
-### Recipes (CSS + JS)
-
-| Component | Description |
-|-----------|-------------|
-| `dialog` | Modal with focus trap, escape-to-close |
-| `drawer` | Side panel overlay |
-| `dropdown` | Menu with keyboard navigation |
-| `popover` | Floating content panel |
-| `tooltip` | Hover information |
-| `tabs` | Tab panel switcher with keyboard arrows |
-| `accordion` | Expandable sections |
-| `combobox` | Searchable select |
-| `select-custom` | Custom-styled select |
-| `command-palette` | Keyboard command menu |
-| `table` | Data table with sorting |
-| `pagination` | Page navigation |
-| `toast` | Notification messages |
-| `sheet` | Full/partial overlay panel |
-| `date-picker` | Calendar date selection |
-
-### Patterns (Compositions)
-
-| Pattern | Composes |
-|---------|----------|
-| `auth-form` | card, input, button, separator, label |
-| `dashboard-shell` | card, grid, avatar, dropdown, button |
-| `settings-page` | accordion, form primitives, cards |
-| `crud-table` | table, button, dropdown |
-| `empty-state` | button |
-| `search-results` | grid, input, button |
-
 ---
 
 ## Design Token System
 
-Loom uses CSS custom properties organized in three layers. Components reference only semantic tokens — never raw palette values.
+All styling uses CSS custom properties organized in three layers. Components reference **only** semantic tokens — never raw palette values.
 
-### Layer 1: Palette (raw values, never used by components)
+### Layer 1: Palette (raw values)
+
+Never referenced by components directly. These define the color space:
 
 ```css
 --palette-indigo-500: oklch(0.55 0.22 264);
@@ -261,52 +348,63 @@ Loom uses CSS custom properties organized in three layers. Components reference 
 --palette-gray-200:   oklch(0.91 0.004 264);
 ```
 
-### Layer 2: Semantic (what components reference)
+### Layer 2: Semantic (what components use)
+
+Purpose-based tokens that map to palette values. Themes override these.
 
 ```css
 /* Surfaces */
---color-bg, --color-bg-subtle, --color-bg-muted
---color-fg, --color-fg-muted, --color-fg-subtle
+--color-bg              --color-bg-subtle        --color-bg-muted
+--color-fg              --color-fg-muted         --color-fg-subtle
 
 /* Interactive */
---color-primary, --color-primary-hover, --color-primary-fg
---color-secondary, --color-destructive, --color-success, --color-warning
+--color-primary         --color-primary-hover     --color-primary-fg
+--color-secondary       --color-destructive       --color-success
+--color-warning         --color-info
 
 /* Borders */
---color-border, --color-border-strong, --color-ring
+--color-border          --color-border-strong     --color-ring
 ```
 
-### Layer 3: Aliases (per-component overrides)
+### Layer 3: Aliases (component-specific)
+
+Optional overrides for fine-tuning individual components:
 
 ```css
---button-radius, --button-height-md
---card-shadow, --card-padding
---input-radius, --input-height
+--button-radius         --button-height-md
+--card-shadow           --card-padding
+--input-radius          --input-height
+--dialog-radius         --dialog-shadow
 ```
 
-### Other Token Files
+### Other Token Categories
 
-| File | Tokens |
-|------|--------|
-| `spacing.css` | `--space-0` through `--space-24` (4px base) |
+| File | Key Tokens |
+|------|------------|
+| `spacing.css` | `--space-0` through `--space-24` (4px base scale) |
 | `typography.css` | `--font-sans`, `--font-mono`, `--text-xs` through `--text-4xl`, `--weight-*`, `--leading-*` |
-| `effects.css` | `--radius-*`, `--shadow-*`, `--z-*` |
-| `motion.css` | `--ease-*`, `--duration-*` |
+| `effects.css` | `--radius-sm` through `--radius-2xl`, `--shadow-xs` through `--shadow-xl`, `--z-*` |
+| `motion.css` | `--ease-default`, `--ease-in-out`, `--duration-fast` (150ms), `--duration-normal` (250ms), `--duration-slow` (350ms) |
 
 ---
 
 ## Theme System
 
-Themes override Layer 2 semantic tokens. Four built-in themes:
+Themes override Layer 2 semantic tokens. Four built-in themes ship with Loom:
 
 | Theme | Description |
 |-------|-------------|
-| `default` | Clean modern with light/dark mode |
-| `midnight` | Deep navy with cyan accents |
-| `paper` | Warm cream, earthy browns |
-| `brutalist` | Black and white, no shadows, no rounding |
+| `default` | Clean modern. Light mode + dark mode via `[data-theme="dark"]` |
+| `midnight` | Deep navy with cyan accents. High-contrast dark theme |
+| `paper` | Warm cream backgrounds, earthy brown accents |
+| `brutalist` | Black and white. No shadows. No border radius |
+
+### Using Themes
 
 ```html
+<!-- Light mode (default) -->
+<html data-theme="light">
+
 <!-- Dark mode -->
 <html data-theme="dark">
 
@@ -314,42 +412,73 @@ Themes override Layer 2 semantic tokens. Four built-in themes:
 <html data-theme="auto">
 ```
 
+### Managing Themes via CLI
+
 ```bash
-bun run src/index.ts theme set midnight
-bun run src/index.ts theme create my-theme
+# Switch active theme
+loom theme set midnight
+
+# Create a custom theme (generates a CSS file with all tokens commented out)
+loom theme create my-brand
+
+# List available themes
+loom theme list
 ```
+
+Custom themes are scaffold files with every semantic token as a commented-out override. Uncomment and modify what you need.
 
 ---
 
-## Loom Core — Reactive Directives
+## Loom Core — Reactive Engine
 
-`loom-core.js` is a zero-dependency reactive engine (~47KB min, ~12KB gzip). Drop it in with a single script tag — no build step needed.
+`loom-core.js` is a zero-dependency reactive engine (~47KB min, ~12KB gzip). Drop it in with a single script tag — no build step required.
 
 ```html
-<script src="loom-core.js"></script>
+<script src="ui/core/loom-core.js" defer></script>
 ```
+
+It provides Alpine.js-style reactive directives, automatic recipe controller initialization, and a global store.
 
 ### Directives
 
 | Directive | Shorthand | Purpose |
 |-----------|-----------|---------|
-| `l-data` | — | Create reactive scope |
+| `l-data` | — | Create reactive scope with initial state |
 | `l-text` | — | Set text content reactively |
 | `l-html` | — | Set inner HTML reactively |
-| `l-bind:attr` | `:attr` | Bind attributes |
-| `l-on:event` | `@event` | Event listeners (with modifiers: prevent, stop, once, debounce) |
-| `l-model` | — | Two-way form binding (.number, .trim, .lazy, .debounce) |
-| `l-show` | — | Toggle visibility with transitions |
+| `l-bind:attr` | `:attr` | Bind element attributes |
+| `l-on:event` | `@event` | Event listeners |
+| `l-model` | — | Two-way form binding |
+| `l-show` | — | Toggle visibility (with transitions) |
 | `l-if` | — | Conditional rendering (on `<template>`) |
 | `l-for` | — | List rendering (on `<template>`) |
-| `l-ref` | — | Element reference |
-| `l-init` | — | Run code once on init |
-| `l-effect` | — | Tracked side effect |
-| `l-cloak` | — | Hide until initialized |
+| `l-ref` | — | Named element reference |
+| `l-init` | — | Run code once on initialization |
+| `l-effect` | — | Tracked reactive side effect |
+| `l-cloak` | — | Hide element until Loom initializes |
+
+### Event Modifiers
+
+`@click.prevent`, `@submit.stop`, `@keydown.enter`, `@click.once`, `@input.debounce.300ms`, `@resize.throttle.100ms`, `@click.self`
+
+### Model Modifiers
+
+`l-model.number`, `l-model.trim`, `l-model.lazy`, `l-model.debounce.300ms`
 
 ### Magic Properties
 
-`$el`, `$refs`, `$store`, `$state`, `$variant`, `$ui`, `$dispatch`, `$nextTick`, `$watch`, `$id`
+| Property | Description |
+|----------|-------------|
+| `$el` | Current element |
+| `$refs` | Named element references |
+| `$store` | Global reactive store |
+| `$state` | Sync reactive state with `data-state` |
+| `$variant` | Sync with `data-variant` |
+| `$ui` | Access recipe controller API |
+| `$dispatch` | Dispatch custom events |
+| `$nextTick` | Run after DOM update |
+| `$watch` | Watch reactive value changes |
+| `$id` | Generate unique IDs |
 
 ### Examples
 
@@ -360,8 +489,14 @@ bun run src/index.ts theme create my-theme
   <button data-ui="button" @click="count++">+1</button>
 </div>
 
+<!-- Two-way binding -->
+<div l-data="{ name: '' }">
+  <input data-ui="input" l-model="name" placeholder="Your name">
+  <p>Hello, <span l-text="name || 'stranger'"></span>!</p>
+</div>
+
 <!-- Conditional list -->
-<div l-data="{ items: ['Apple', 'Banana'], show: true }">
+<div l-data="{ items: ['Apple', 'Banana', 'Cherry'], show: true }">
   <button data-ui="button" @click="show = !show">Toggle</button>
   <template l-if="show">
     <div data-ui="stack" data-gap="2">
@@ -378,6 +513,9 @@ bun run src/index.ts theme create my-theme
 </script>
 <div l-data="{}">
   <span l-text="$store.app.user"></span>
+  <button data-ui="button" @click="$store.app.theme = $store.app.theme === 'light' ? 'dark' : 'light'">
+    Toggle Theme
+  </button>
 </div>
 ```
 
@@ -385,121 +523,399 @@ bun run src/index.ts theme create my-theme
 
 ## The Manifest System
 
-Every component ships with a `.manifest.json` — a machine-readable contract driving audit, repair, AI context, and code generation.
+Every component ships with a `.manifest.json` — a machine-readable contract that drives audit, repair, AI context generation, and code generation.
+
+### Manifest Structure
 
 ```json
 {
-  "name": "button",
-  "kind": "primitive",
-  "anatomy": { "tag": "button", "selector": "[data-ui='button']" },
-  "slots": {},
-  "variants": {
-    "variant": { "values": ["default","primary","destructive","ghost","outline","link"] },
-    "size": { "values": ["sm","md","lg"] }
+  "name": "dialog",
+  "version": "1.0.0",
+  "kind": "recipe",
+  "category": "overlay",
+  "description": "Modal dialog with focus trap and escape-to-close",
+
+  "anatomy": {
+    "tag": "div",
+    "selector": "[data-ui='dialog']",
+    "content_model": "slots"
   },
-  "a11y": { "keyboard": { "Enter": "Activate", "Space": "Activate" } },
-  "tokens_used": ["color-primary","radius-md","space-4"],
-  "safe_transforms": ["Change data-variant","Change data-size","Change text content"],
-  "unsafe_transforms": ["Remove data-ui attribute"]
+
+  "slots": {
+    "trigger": { "selector": "[data-part='trigger']", "required": true },
+    "overlay": { "selector": "[data-part='overlay']", "required": true },
+    "panel":   { "selector": "[data-part='panel']",   "required": true },
+    "title":   { "selector": "[data-part='title']",   "required": true },
+    "close":   { "selector": "[data-part='close']",   "required": true },
+    "body":    { "selector": "[data-part='body']",     "required": false }
+  },
+
+  "variants": {},
+  "states": {
+    "open": { "attr": "data-state=\"open\"" }
+  },
+
+  "a11y": {
+    "role": "dialog",
+    "aria-modal": true,
+    "focus_trap": true,
+    "escape_closes": true,
+    "keyboard": { "Escape": "Close dialog", "Tab": "Cycle focus within dialog" }
+  },
+
+  "tokens_used": ["color-bg", "shadow-xl", "radius-xl", "duration-normal"],
+  "templates": { "html": "<div data-ui=\"dialog\">..." },
+  "safe_transforms": ["Change title text", "Add body content", "Change trigger text"],
+  "unsafe_transforms": ["Remove data-ui attribute", "Remove overlay", "Remove focus trap"],
+  "composition": { "contains": ["button"], "used_in": ["crud-table"] },
+  "files": { "html": "dialog.html", "css": "dialog.css", "js": "dialog.js", "manifest": "dialog.manifest.json" },
+  "tests": ["opens on trigger click", "traps focus", "closes on Escape"]
 }
 ```
 
-Manifests enable:
-- **Audit** — validate HTML against the contract
-- **Repair** — auto-fix missing slots, ARIA, and structure
-- **Context** — generate AI-readable documentation
-- **Explain** — produce human-readable descriptions
-- **Trace** — show dependency graphs
+### What Manifests Enable
+
+| Capability | How It Works |
+|-----------|-------------|
+| **Audit** | Validate HTML against slot requirements, variant values, ARIA attributes |
+| **Repair** | Auto-fix missing slots, add required ARIA, remove class attributes |
+| **Context** | Generate structured JSON/Markdown for AI agents to read |
+| **Explain** | Produce human-readable component descriptions with anatomy trees |
+| **Trace** | Show dependency graphs, file trees, token usage |
+| **Create** | Generate valid component skeletons from the schema |
 
 ---
 
 ## JavaScript Controllers
 
-Every recipe has a JS controller with a `create{Name}` factory:
+Every recipe has a JavaScript controller following the `create{Name}` factory pattern:
 
 ```js
 import { createDialog } from "./ui/recipes/dialog/dialog.js";
 
-const dialog = createDialog(document.querySelector('[data-ui="dialog"]'));
+const el = document.querySelector('[data-ui="dialog"]');
+const dialog = createDialog(el);
+
 dialog.open();
 dialog.close();
 dialog.destroy();
 ```
 
-Controller rules:
-1. Prevent double-init via `root._loom{Name}`
-2. Find parts via `[data-part="..."]` selectors
-3. Express state through `data-state` only
-4. Return an API object with `destroy()`
-5. Import only from `core/` modules
+### Controller Conventions
+
+1. **Prevent double-init** via `root._loom{Name}` guard
+2. **Find parts** via `root.querySelector('[data-part="..."]')` selectors
+3. **Express state** through `data-state` only — never class names
+4. **Return API object** with at minimum a `destroy()` method
+5. **Import only** from `core/` modules (dom, events, focus, motion, store)
+6. **No data fetching** — controllers manage UI state, not data
 
 ### Auto-Initialization
 
-Include `loom.js` and all recipe components work automatically:
+Include `loom-core.js` and all recipes auto-initialize:
 
 ```html
-<script type="module" src="./ui/core/loom.js"></script>
+<script src="ui/core/loom-core.js" defer></script>
 ```
 
-Scans for `[data-ui]` elements, calls factories, and watches for dynamic additions via MutationObserver.
+The engine scans for `[data-ui]` elements matching known recipes, calls their factories, and watches for dynamically added elements via MutationObserver. You never need to call `createDialog()` manually unless you want the return API.
 
 ---
 
 ## CLI Reference
 
-| Command | Description |
-|---------|-------------|
-| `init` | Initialize a new Loom project |
-| `add <components>` | Add components (auto-resolves dependencies) |
-| `list` | Show installed/available components |
-| `inspect <name>` | Display component manifest |
-| `audit` | Validate components against manifests |
-| `repair` | Auto-fix audit issues |
-| `context` | Generate AI context file |
-| `explain <name>` | Human-readable component description |
-| `trace <name>` | Show dependency graph |
-| `conform` | Normalize component markup |
-| `theme set\|list\|create` | Manage themes |
-| `variant add\|remove` | Manage component variants |
-| `scaffold <name>` | Generate page templates |
-| `doctor` | Check project health |
+The CLI is organized into five categories. Run `loom help` for the full list or `loom <command> --help` for options.
+
+### Project Setup
+
+```bash
+loom init                        # Initialize new project (creates ui/, config, bundle)
+loom init --theme midnight       # Initialize with a specific theme
+loom init --tokens-split         # Keep token files separate (not merged)
+loom init --no-core              # Skip JS modules (static CSS-only projects)
+loom init --dir ./styles         # Custom output directory
+
+loom doctor                      # Health check (config, files, manifests)
+```
+
+### Component Management
+
+```bash
+loom add button card dialog      # Add components (auto-resolves dependencies)
+loom add --all                   # Add every component
+loom add --layer primitives      # Add all primitives
+loom add --dry-run               # Preview without writing
+
+loom remove dialog toast         # Remove components (checks dependencies)
+loom remove button --force       # Remove even if others depend on it
+loom remove card --dry-run       # Preview removal
+
+loom list                        # Show installed and available components
+
+loom create my-widget --kind primitive    # Scaffold a new custom component
+loom create data-grid --kind recipe       # Scaffold with JS controller
+loom create status --kind primitive --category layout
+
+loom inspect button              # Show manifest details
+loom inspect dialog --json       # Raw JSON output
+```
+
+### Development
+
+```bash
+loom dev                         # Start dev server (default: port 3000)
+loom dev --port 8080             # Custom port
+loom dev --open                  # Open browser automatically
+loom dev --bundle                # Auto-rebuild CSS bundle on changes
+
+loom bundle                      # Generate/regenerate CSS bundle
+loom bundle --minify             # Strip comments and whitespace
+loom bundle --watch              # Watch and rebuild on changes
+loom bundle --output dist/s.css  # Custom output path
+loom bundle --dry-run            # Show what would be bundled
+
+loom theme set midnight          # Switch active theme
+loom theme create my-brand       # Scaffold custom theme
+loom theme list                  # Show available themes
+
+loom variant add button visual=accent     # Add variant value
+loom variant remove button visual=accent  # Remove variant value
+
+loom scaffold landing-page       # Generate landing page HTML
+loom scaffold admin-dashboard    # Generate dashboard layout
+loom scaffold internal-tool      # Generate settings/forms page
+```
+
+### Quality and Validation
+
+```bash
+loom audit                       # Validate all HTML against manifests
+loom audit --file index.html     # Audit specific file
+loom audit --json                # JSON output for tooling
+loom audit --fix                 # Alias for repair
+
+loom repair                      # Auto-fix audit issues
+
+loom conform                     # Normalize attribute order, add machine comments
+loom conform --dry-run           # Preview changes
+
+loom trace dialog                # Show dependency graph, file tree, token usage
+loom trace dialog --json         # Machine-readable output
+```
+
+### AI / Agent
+
+```bash
+loom context                     # Generate .loom/context.json
+loom context --format md         # Markdown format for LLM prompts
+loom context --format cursorrules # Cursor IDE format
+loom context --skill             # Also generate .loom/SKILL.md
+loom context --stdout            # Print to stdout
+
+loom explain dialog              # Human/agent-readable component explanation
+loom explain dialog --json       # Structured output
+```
+
+---
+
+## CSS Bundle
+
+The CSS bundle solves the multi-file problem. Without it, a page using all components would need 40-50+ `<link>` tags. The bundle concatenates everything into one file with correct cascade order.
+
+### How It Works
+
+`loom bundle` reads your `loom.config.json`, finds all installed components, and concatenates their CSS in this order:
+
+1. **Tokens** — design token custom properties
+2. **Theme** — active theme overrides
+3. **Base** — reset.css, prose.css
+4. **Primitives** — installed primitive CSS (alphabetical)
+5. **Recipes** — installed recipe CSS (alphabetical)
+6. **Patterns** — installed pattern CSS (alphabetical)
+
+Each section is separated by a `/* === primitives/button.css === */` comment for debuggability.
+
+### Auto-Bundling
+
+The bundle regenerates automatically when you:
+- `loom add` — new components are included
+- `loom remove` — removed components are excluded
+- `loom theme set` — new theme CSS is swapped in
+- `loom create` — custom component CSS is included
+- `loom init` — initial bundle created on project setup
+
+### Configuration
+
+After first bundle generation, `loom.config.json` gains a `bundle` section:
+
+```json
+{
+  "bundle": {
+    "output": "./ui/loom.bundle.css",
+    "auto": true,
+    "minify": false
+  }
+}
+```
+
+Set `auto: false` to disable auto-regeneration on add/remove/theme changes.
 
 ---
 
 ## Audit and Repair
 
-The audit system validates markup against manifests:
+The audit system validates your HTML against component manifests. It catches structural errors, missing accessibility attributes, invalid variants, and anti-patterns.
 
 ```bash
-# Run audit
-bun run src/index.ts audit
-
-# Auto-repair
-bun run src/index.ts repair
+loom audit              # Run all checks
+loom repair             # Auto-fix what can be fixed
 ```
 
 ### Audit Rules
 
-- `required-slot` — all required `[data-part]` slots exist
-- `required-aria` — all required ARIA attributes present
-- `variant-valid` — only manifest-approved variants used
-- `state-valid` — state attributes match manifest
-- `accessibility` — WCAG compliance checks
-- Anti-pattern detection (class usage, inline color values, etc.)
+| Rule | What It Checks |
+|------|---------------|
+| `slot-satisfied` | All required `[data-part]` slots present |
+| `valid-attributes` | Only manifest-allowed attributes used |
+| `variant-values` | Variant values match manifest's allowed list |
+| `state-valid` | State values match manifest |
+| `controller-loaded` | Recipe controllers are referenced |
+| `token-exists` | CSS tokens used are defined |
+| `no-fetch` | JS controllers don't fetch data |
+| `no-important` | No `!important` in CSS |
+| `no-id-selector` | No ID selectors in CSS |
+| `no-class-selector` | No class selectors (use `data-*`) |
+| `no-external-import` | Only relative/core imports in JS |
+| `reduced-motion` | Animations include `prefers-reduced-motion` query |
+
+### Repair
+
+`loom repair` runs the audit, identifies auto-fixable issues, applies deterministic fixes, then re-audits to verify. Fixable issues include missing ARIA attributes, incorrect attribute order, and missing required slots with obvious defaults.
+
+### Conform
+
+`loom conform` normalizes markup without fixing semantic issues:
+- Reorders attributes to canonical order: `data-ui`, `data-part`, `data-state`, `data-variant`, `data-size`, ARIA, then others
+- Adds machine comments at the top of component CSS files
+- Ensures consistent formatting across all HTML files
+
+---
+
+## Scaffolding and Code Generation
+
+### Page Scaffolds
+
+Generate complete, working HTML pages with all required CSS and components:
+
+```bash
+loom scaffold landing-page       # Hero + features + CTA sections
+loom scaffold admin-dashboard    # Sidebar + header + stats + data table
+loom scaffold internal-tool      # Tab-based settings with forms
+```
+
+Scaffolds auto-install any missing components and use the bundle when one exists (single `<link>` tag instead of per-component links).
+
+### Custom Components
+
+Create your own components that integrate with the full Loom workflow:
+
+```bash
+loom create sidebar --kind primitive
+```
+
+This generates a complete component directory:
+
+```
+ui/primitives/sidebar/
+├── sidebar.manifest.json    Valid manifest skeleton
+├── sidebar.css              CSS with [data-ui="sidebar"] selector
+└── sidebar.html             Reference markup
+```
+
+For recipes (`--kind recipe`), a JavaScript controller stub is also generated with the `create{Name}` pattern.
+
+Custom components are immediately registered in `loom.config.json`, included in the CSS bundle, and visible to `loom audit`, `loom context`, and all other CLI tools.
+
+---
+
+## AI Agent Integration
+
+Loom is designed as an **agent-native** framework. Every design decision optimizes for AI agents being able to reliably generate, inspect, and repair UI code.
+
+### How Agents Use Loom
+
+1. **Read manifests** — JSON contracts describe every component's anatomy, slots, variants, states, and ARIA requirements
+2. **Generate markup** — Use `templates.html` from manifests as starting points
+3. **Audit results** — Run `loom audit` to validate generated HTML
+4. **Auto-repair** — Run `loom repair` to fix common mistakes
+5. **Understand constraints** — `safe_transforms` and `unsafe_transforms` tell agents what they can and cannot modify
+
+### Context Generation
+
+```bash
+loom context                    # Generate .loom/context.json
+loom context --format md        # Markdown for LLM system prompts
+loom context --skill            # Generate Claude Code SKILL.md
+```
+
+The context file aggregates all installed component manifests into a single JSON file that agents can read at the start of a session. It includes:
+
+- Framework version and theme
+- The five-attribute protocol
+- All component kinds, variants, slots, states, templates
+- Safe/unsafe transform rules
+- Linting constraints
+
+### Claude Code Integration
+
+Loom ships with a [loom-creator skill](.claude/skills/loom-creator/) for Claude Code. When active, Claude can:
+
+- Generate pages using the correct attribute protocol
+- Read manifests to understand component contracts
+- Apply the CSS bundle pattern (single `<link>` tag)
+- Follow the strict rules (no classes, tokens only, ARIA compliance)
+- Use reactive directives (`l-data`, `l-model`, `l-for`, etc.)
+
+The skill references are in `.claude/skills/loom-creator/references/`:
+- `primitives.md` — All 22 primitives with full HTML anatomy
+- `recipes.md` — All 15 recipes with HTML, JS controller patterns
+- `patterns.md` — All 6 composition patterns
+- `tokens.md` — Complete design token reference
+- `manifest.md` — Manifest JSON schema and examples
+- `directives.md` — Reactive directives and global API
 
 ---
 
 ## CSS Conventions
 
-Seven rules for all component CSS:
+Seven rules govern all component CSS in Loom:
 
-1. **Semantic CSS, not utility-first.** Button styling belongs in `button.css`.
+1. **Semantic CSS, not utility-first.** Button styling belongs in `button.css`, not scattered across utility classes.
 2. **Attribute selectors only.** `[data-ui="button"]`, never `.btn`.
 3. **Token references only.** `var(--color-primary)`, never `#4f46e5`.
 4. **State via `data-state`, never classes.** `[data-state="open"]`, never `.is-open`.
-5. **No `!important`.** Low specificity via single attribute selectors.
-6. **No IDs as CSS selectors.** IDs exist for ARIA relationships only.
+5. **No `!important`.** Low specificity via single attribute selectors makes it unnecessary.
+6. **No IDs as CSS selectors.** IDs exist for ARIA relationships only (`aria-labelledby`, `aria-controls`).
 7. **Respect `prefers-reduced-motion`.** Every animation has a reduced-motion fallback.
+
+### Component CSS Header Convention
+
+```css
+/* @ui:component button */
+/* @ui:tokens color-primary, color-primary-hover, radius-md, space-4, duration-fast */
+
+[data-ui="button"] {
+  /* base styles */
+}
+
+[data-ui="button"][data-variant="primary"] {
+  /* variant override */
+}
+
+[data-ui="button"][data-state="loading"] {
+  /* state style */
+}
+```
 
 ---
 
@@ -507,24 +923,63 @@ Seven rules for all component CSS:
 
 ```
 loom-ui/
-├── src/                  CLI source (TypeScript)
-│   ├── index.ts          Entry point and command router
-│   ├── commands/         One file per CLI command
-│   ├── audit/            Checker, rules, reporter, repairer
-│   ├── parser/           HTML, CSS, JS parsers
-│   ├── generator/        Context and skill generation
-│   ├── utils/            Config, filesystem, logger
-│   └── manifest.ts       Schema and validation
-├── registry/             Component library
-│   ├── tokens/           Design token CSS files
-│   ├── base/             Reset and prose styles
-│   ├── core/             JS runtime modules
-│   ├── themes/           Theme override files
-│   ├── primitives/       CSS-only components
-│   ├── recipes/          CSS + JS components
-│   └── patterns/         Page compositions
-├── tests/                Bun test suite
-└── playground/           Example pages
+├── src/                      CLI source (TypeScript)
+│   ├── index.ts              Entry point — command router
+│   ├── manifest.ts           Manifest types and validation
+│   ├── commands/             18 CLI commands
+│   │   ├── init.ts           Project initialization
+│   │   ├── add.ts            Component installation
+│   │   ├── remove.ts         Component uninstallation
+│   │   ├── create.ts         Custom component scaffolding
+│   │   ├── bundle.ts         CSS bundle composition
+│   │   ├── dev.ts            Development server
+│   │   ├── list.ts           Component listing
+│   │   ├── inspect.ts        Manifest viewer
+│   │   ├── audit.ts          HTML validation
+│   │   ├── repair.ts         Auto-fix engine
+│   │   ├── doctor.ts         Health checker
+│   │   ├── context.ts        AI context generator
+│   │   ├── explain.ts        Component explainer
+│   │   ├── trace.ts          Dependency tracer
+│   │   ├── conform.ts        Markup normalizer
+│   │   ├── theme.ts          Theme manager
+│   │   ├── variant.ts        Variant editor
+│   │   └── scaffold.ts       Page generator
+│   ├── audit/                Audit subsystem
+│   │   ├── rules.ts          12 audit rules
+│   │   ├── checker.ts        DOM contract checker
+│   │   ├── reporter.ts       Formatted output
+│   │   └── repairer.ts       Auto-fix logic
+│   ├── parser/               Code parsers
+│   │   ├── html-parser.ts    Component instance extraction
+│   │   ├── css-parser.ts     Token and selector extraction
+│   │   └── js-parser.ts      Import and pattern detection
+│   ├── generator/            Code generators
+│   │   ├── context.ts        .loom/context.json generator
+│   │   ├── manifest.ts       Manifest aggregator
+│   │   └── skill.ts          Claude Code skill generator
+│   └── utils/                Shared utilities
+│       ├── config.ts         loom.config.json reader/writer
+│       ├── fs.ts             File system helpers
+│       ├── logger.ts         Colored terminal output
+│       ├── components.ts     Component lookup and registry helpers
+│       ├── codegen.ts        Shared code generators (loom.js, context.json)
+│       └── bundler.ts        CSS bundle generator
+│
+├── registry/                 Component library (shipped with CLI)
+│   ├── tokens/               8 CSS token files
+│   ├── base/                 reset.css, prose.css
+│   ├── core/                 loom-core.js + utility modules
+│   ├── themes/               4 built-in themes
+│   ├── primitives/           22 CSS-only components
+│   ├── recipes/              15 CSS+JS interactive components
+│   └── patterns/             6 page-level compositions
+│
+├── tests/                    Bun test suite (462 tests)
+├── playground/               6 example pages
+├── package.json
+├── tsconfig.json
+└── loom.config.json          (generated per-project)
 ```
 
 ---
@@ -533,7 +988,7 @@ loom-ui/
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) (runtime and test runner)
+- [Bun](https://bun.sh) (runtime, package manager, test runner)
 
 ### Setup
 
@@ -546,21 +1001,35 @@ bun install
 ### Commands
 
 ```bash
-bun test                    # Run all tests
-bun run src/index.ts help   # CLI help
-bun run --watch src/index.ts audit  # Watch mode
-tsc --noEmit                # Type check
+bun test                         # Run all 462 tests
+bun run src/index.ts help        # CLI help
+bun run src/index.ts dev         # Start dev server for playground
+tsc --noEmit                     # Type check
 ```
 
----
+### Adding a New Primitive
 
-## Tech Stack
+1. Create `registry/primitives/{name}/` with `.html`, `.css`, `.manifest.json`
+2. Follow the manifest schema in `src/manifest.ts`
+3. Use attribute selectors and token references in CSS
+4. Add tests in `tests/`
 
-- **Runtime:** Bun (TypeScript-first, ESM)
-- **Testing:** Bun test + Happy-DOM
-- **Styling:** Pure CSS with custom properties
-- **Reactivity:** Custom proxy-based engine (loom-core.js)
-- **Dependencies:** Zero at runtime, TypeScript + Happy-DOM for dev
+### Adding a New Recipe
+
+Same as primitive, plus:
+1. Add a `.js` controller with `export function create{Name}(root) { ... }`
+2. Follow the controller conventions (double-init guard, data-state only, destroy API)
+3. The controller is auto-registered in `loom-core.js`
+
+### Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Runtime | Bun (TypeScript-first, ESM) |
+| Testing | Bun test + Happy-DOM |
+| Styling | Pure CSS with custom properties (oklch colors) |
+| Reactivity | Custom proxy-based engine (loom-core.js, ~3000 lines) |
+| Dependencies | Zero at runtime. TypeScript + Happy-DOM for development |
 
 ---
 

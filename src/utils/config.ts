@@ -12,6 +12,11 @@ export interface LoomConfig {
     recipes: string[];
     patterns: string[];
   };
+  bundle?: {
+    output: string;
+    auto: boolean;
+    minify: boolean;
+  };
 }
 
 export const DEFAULT_CONFIG: LoomConfig = {

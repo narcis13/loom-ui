@@ -26,9 +26,10 @@ Every Loom component uses exactly five data attributes — this is the DOM contr
 1. Read the relevant manifest(s) from `registry/` to confirm anatomy, slots, variants, states, ARIA requirements
 2. Generate HTML using only data attributes — never CSS classes
 3. Reference design tokens via `var(--token-name)` — never hardcode values
-4. Include only the CSS files actually used
+4. Use the CSS bundle: `<link rel="stylesheet" href="ui/loom.bundle.css">` (one file for all styles)
 5. For recipes, ensure the full inner HTML structure exists (JS controllers query parts at init)
 6. Add all required ARIA attributes per manifest
+7. Include `<script src="ui/core/loom-core.js" defer></script>` for reactive directives and recipe auto-init
 
 ### When auditing code
 
@@ -41,15 +42,16 @@ Every Loom component uses exactly five data attributes — this is the DOM contr
 
 ### When creating new registry components
 
-1. Start with the manifest — define anatomy, slots, variants, states, a11y
-2. Create the file set: `.html`, `.css`, `.manifest.json` (+ `.js` for recipes)
-3. Follow CSS conventions: attribute selectors only, token references only
-4. Follow JS controller pattern for recipes (see [references/recipes.md](references/recipes.md))
-5. Register controller in `loom-core.js` if recipe
+1. Use `loom create <name> --kind primitive|recipe` to scaffold the file set
+2. Or manually: start with the manifest — define anatomy, slots, variants, states, a11y
+3. Create the file set: `.html`, `.css`, `.manifest.json` (+ `.js` for recipes)
+4. Follow CSS conventions: attribute selectors only, token references only
+5. Follow JS controller pattern for recipes (see [references/recipes.md](references/recipes.md))
+6. Run `loom bundle` to include the new component's CSS in the bundle
 
 ## Component Inventory
 
-**21 Primitives** (CSS-only): avatar, badge, button, card, checkbox, empty-state, grid, input, kbd, label, nav, progress, radio, select, separator, spinner, stack, stepper, surface, switch, text, textarea
+**22 Primitives** (CSS-only): avatar, badge, button, card, checkbox, empty-state, grid, input, kbd, label, nav, progress, radio, select, separator, spinner, stack, stepper, surface, switch, text, textarea
 
 **15 Recipes** (CSS + JS): accordion, combobox, command-palette, date-picker, dialog, drawer, dropdown, pagination, popover, select-custom, sheet, table, tabs, toast, tooltip
 
@@ -72,25 +74,10 @@ Always follow this structure for full pages:
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Page Title</title>
 
-  <!-- Tokens -->
-  <link rel="stylesheet" href="ui/tokens/palette.css">
-  <link rel="stylesheet" href="ui/tokens/spacing.css">
-  <link rel="stylesheet" href="ui/tokens/typography.css">
-  <link rel="stylesheet" href="ui/tokens/effects.css">
-  <link rel="stylesheet" href="ui/tokens/motion.css">
-  <link rel="stylesheet" href="ui/tokens/semantic.css">
-  <link rel="stylesheet" href="ui/tokens/aliases.css">
+  <!-- Single CSS bundle (replaces 40+ individual link tags) -->
+  <link rel="stylesheet" href="ui/loom.bundle.css">
 
-  <!-- Base -->
-  <link rel="stylesheet" href="ui/base/reset.css">
-
-  <!-- Theme -->
-  <link rel="stylesheet" href="ui/themes/default.css">
-
-  <!-- Components (only what you use) -->
-  <link rel="stylesheet" href="ui/primitives/button/button.css">
-
-  <!-- Loom Core (for reactive directives + recipe auto-init) -->
+  <!-- Loom Core (reactive directives + recipe auto-init) -->
   <script src="ui/core/loom-core.js" defer></script>
 </head>
 <body>
@@ -103,6 +90,20 @@ Always follow this structure for full pages:
   </div>
 </body>
 </html>
+```
+
+**If no bundle exists** (or for granular control), include individual files:
+
+```html
+<!-- Tokens + base + theme -->
+<link rel="stylesheet" href="ui/tokens/index.css">
+<link rel="stylesheet" href="ui/tokens/theme.css">
+<link rel="stylesheet" href="ui/base/reset.css">
+<link rel="stylesheet" href="ui/base/prose.css">
+
+<!-- Only the components you use -->
+<link rel="stylesheet" href="ui/primitives/button/button.css">
+<link rel="stylesheet" href="ui/recipes/dialog/dialog.css">
 ```
 
 ## Layout Patterns
@@ -160,21 +161,42 @@ Always follow this structure for full pages:
 
 ## CLI Reference
 
+### Project Setup
 ```bash
 loom init [--theme <name>] [--tokens-split] [--no-core] [--dir <path>]
-loom add <component...>        # auto-resolves dependencies
-loom list [--installed] [--available]
-loom inspect <component>       # show manifest details
-loom audit [--json]            # validate against manifests
-loom repair                    # auto-fix audit issues
-loom context                   # generate .loom/context.json for AI
-loom explain <component>       # human-readable description
-loom trace <component>         # show dependency graph
-loom conform                   # normalize markup
-loom theme set|list|create <name>
-loom variant add|remove <component> <variant>
-loom scaffold <pattern>        # generate page template
-loom doctor                    # health check
+loom doctor                        # health check
+```
+
+### Component Management
+```bash
+loom add <component...>            # auto-resolves dependencies
+loom remove <component...>         # checks dependencies (--force to override)
+loom list                          # show installed/available
+loom create <name> --kind <type>   # scaffold custom component (primitive|recipe)
+loom inspect <component>           # show manifest details
+```
+
+### Development
+```bash
+loom dev [--port <n>] [--open] [--bundle]   # dev server with optional auto-bundle
+loom bundle [--minify] [--watch]             # compose CSS into single file
+loom theme set|list|create <name>            # manage themes
+loom variant add|remove <component> <spec>   # manage variants
+loom scaffold <template>                     # generate page template
+```
+
+### Quality
+```bash
+loom audit [--json] [--file <path>]  # validate against manifests
+loom repair                          # auto-fix audit issues
+loom conform [--dry-run]             # normalize markup
+loom trace <component> [--json]      # show dependency graph
+```
+
+### AI / Agent
+```bash
+loom context [--format json|md|cursorrules] [--skill] [--stdout]
+loom explain <component> [--json]    # human/agent-readable explanation
 ```
 
 Themes: `default`, `midnight`, `paper`, `brutalist`.
@@ -187,14 +209,14 @@ Themes: `default`, `midnight`, `paper`, `brutalist`.
 4. **NEVER** use IDs as CSS selectors. IDs are for ARIA relationships only.
 5. CSS selectors **MUST** use attribute selectors: `[data-ui="button"]`, not `.btn`.
 6. For inline styles, use tokens: `style="color: var(--color-primary)"`.
-7. Include only the CSS files you actually use.
+7. Use the CSS bundle (`ui/loom.bundle.css`) for new pages. It auto-regenerates on `add`/`remove`/`theme` changes.
 8. Recipes auto-initialize — include `loom-core.js` and write correct HTML with all required inner structure.
 9. `data-state` is the **ONLY** attribute JS should modify dynamically.
 10. Always add ARIA attributes as required by manifests.
 
 ## References
 
-- [references/primitives.md](references/primitives.md) — All 21 primitives with HTML anatomy
+- [references/primitives.md](references/primitives.md) — All 22 primitives with HTML anatomy
 - [references/recipes.md](references/recipes.md) — All 15 recipes with HTML anatomy, JS patterns
 - [references/patterns.md](references/patterns.md) — All 6 composition patterns
 - [references/tokens.md](references/tokens.md) — Design token reference

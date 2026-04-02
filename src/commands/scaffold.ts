@@ -6,6 +6,7 @@ import { log } from "../utils/logger";
 import { configExists, readConfig, writeConfig } from "../utils/config";
 import { ensureDir, getRegistryPath } from "../utils/fs";
 import { loadManifest } from "../manifest";
+import { generateBundle } from "../utils/bundler";
 
 interface ScaffoldDef {
   name: string;
@@ -118,24 +119,40 @@ async function ensureComponentsInstalled(
   return [];
 }
 
-function generateLandingPage(title: string): string {
+function cssLinks(components: string[], hasBundle: boolean, outputDir: string): string {
+  if (hasBundle) {
+    return `  <link rel="stylesheet" href="${outputDir}/loom.bundle.css">`;
+  }
+
+  const links: string[] = [];
+  links.push(`  <link rel="stylesheet" href="${outputDir}/tokens/index.css">`);
+  links.push(`  <link rel="stylesheet" href="${outputDir}/tokens/theme.css">`);
+  links.push(`  <link rel="stylesheet" href="${outputDir}/base/reset.css">`);
+  links.push(`  <link rel="stylesheet" href="${outputDir}/base/prose.css">`);
+
+  for (const comp of components) {
+    // Determine layer by checking common primitives
+    const primitives = [
+      "button", "card", "input", "textarea", "select", "checkbox", "radio",
+      "switch", "label", "badge", "separator", "avatar", "spinner", "kbd",
+      "stack", "grid", "surface", "progress", "stepper", "empty-state", "text", "nav",
+    ];
+    const layer = primitives.includes(comp) ? "primitives" : "recipes";
+    links.push(`  <link rel="stylesheet" href="${outputDir}/${layer}/${comp}/${comp}.css">`);
+  }
+
+  return links.join("\n");
+}
+
+function generateLandingPage(title: string, hasBundle: boolean, outputDir: string): string {
+  const components = ["button", "card", "separator", "grid", "stack", "surface", "badge"];
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
-  <link rel="stylesheet" href="ui/tokens/index.css">
-  <link rel="stylesheet" href="ui/tokens/theme.css">
-  <link rel="stylesheet" href="ui/base/reset.css">
-  <link rel="stylesheet" href="ui/base/prose.css">
-  <link rel="stylesheet" href="ui/primitives/button/button.css">
-  <link rel="stylesheet" href="ui/primitives/card/card.css">
-  <link rel="stylesheet" href="ui/primitives/separator/separator.css">
-  <link rel="stylesheet" href="ui/primitives/grid/grid.css">
-  <link rel="stylesheet" href="ui/primitives/stack/stack.css">
-  <link rel="stylesheet" href="ui/primitives/surface/surface.css">
-  <link rel="stylesheet" href="ui/primitives/badge/badge.css">
+${cssLinks(components, hasBundle, outputDir)}
   <style>
     body { font-family: var(--font-sans); color: var(--color-fg); background: var(--color-bg); }
     [data-part="hero"] { text-align: center; padding: var(--space-20) var(--space-6); }
@@ -202,33 +219,18 @@ function generateLandingPage(title: string): string {
 </html>`;
 }
 
-function generateAdminDashboard(title: string): string {
+function generateAdminDashboard(title: string, hasBundle: boolean, outputDir: string): string {
+  const components = [
+    "button", "card", "input", "badge", "avatar", "separator", "spinner",
+    "grid", "stack", "surface", "dialog", "dropdown", "tabs", "toast", "table", "pagination",
+  ];
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
-  <link rel="stylesheet" href="ui/tokens/index.css">
-  <link rel="stylesheet" href="ui/tokens/theme.css">
-  <link rel="stylesheet" href="ui/base/reset.css">
-  <link rel="stylesheet" href="ui/base/prose.css">
-  <link rel="stylesheet" href="ui/primitives/button/button.css">
-  <link rel="stylesheet" href="ui/primitives/card/card.css">
-  <link rel="stylesheet" href="ui/primitives/input/input.css">
-  <link rel="stylesheet" href="ui/primitives/badge/badge.css">
-  <link rel="stylesheet" href="ui/primitives/avatar/avatar.css">
-  <link rel="stylesheet" href="ui/primitives/separator/separator.css">
-  <link rel="stylesheet" href="ui/primitives/spinner/spinner.css">
-  <link rel="stylesheet" href="ui/primitives/grid/grid.css">
-  <link rel="stylesheet" href="ui/primitives/stack/stack.css">
-  <link rel="stylesheet" href="ui/primitives/surface/surface.css">
-  <link rel="stylesheet" href="ui/recipes/dialog/dialog.css">
-  <link rel="stylesheet" href="ui/recipes/dropdown/dropdown.css">
-  <link rel="stylesheet" href="ui/recipes/tabs/tabs.css">
-  <link rel="stylesheet" href="ui/recipes/toast/toast.css">
-  <link rel="stylesheet" href="ui/recipes/table/table.css">
-  <link rel="stylesheet" href="ui/recipes/pagination/pagination.css">
+${cssLinks(components, hasBundle, outputDir)}
   <style>
     body { font-family: var(--font-sans); color: var(--color-fg); background: var(--color-bg); margin: 0; }
     [data-ui="dashboard-shell"] { display: grid; grid-template-columns: 16rem 1fr; grid-template-rows: auto 1fr; min-height: 100vh; }
@@ -363,35 +365,19 @@ function generateAdminDashboard(title: string): string {
 </html>`;
 }
 
-function generateInternalTool(title: string): string {
+function generateInternalTool(title: string, hasBundle: boolean, outputDir: string): string {
+  const components = [
+    "button", "card", "input", "label", "select", "checkbox", "switch",
+    "badge", "separator", "spinner", "grid", "stack",
+    "tabs", "dialog", "dropdown", "toast", "table", "pagination",
+  ];
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
-  <link rel="stylesheet" href="ui/tokens/index.css">
-  <link rel="stylesheet" href="ui/tokens/theme.css">
-  <link rel="stylesheet" href="ui/base/reset.css">
-  <link rel="stylesheet" href="ui/base/prose.css">
-  <link rel="stylesheet" href="ui/primitives/button/button.css">
-  <link rel="stylesheet" href="ui/primitives/card/card.css">
-  <link rel="stylesheet" href="ui/primitives/input/input.css">
-  <link rel="stylesheet" href="ui/primitives/label/label.css">
-  <link rel="stylesheet" href="ui/primitives/select/select.css">
-  <link rel="stylesheet" href="ui/primitives/checkbox/checkbox.css">
-  <link rel="stylesheet" href="ui/primitives/switch/switch.css">
-  <link rel="stylesheet" href="ui/primitives/badge/badge.css">
-  <link rel="stylesheet" href="ui/primitives/separator/separator.css">
-  <link rel="stylesheet" href="ui/primitives/spinner/spinner.css">
-  <link rel="stylesheet" href="ui/primitives/grid/grid.css">
-  <link rel="stylesheet" href="ui/primitives/stack/stack.css">
-  <link rel="stylesheet" href="ui/recipes/tabs/tabs.css">
-  <link rel="stylesheet" href="ui/recipes/dialog/dialog.css">
-  <link rel="stylesheet" href="ui/recipes/dropdown/dropdown.css">
-  <link rel="stylesheet" href="ui/recipes/toast/toast.css">
-  <link rel="stylesheet" href="ui/recipes/table/table.css">
-  <link rel="stylesheet" href="ui/recipes/pagination/pagination.css">
+${cssLinks(components, hasBundle, outputDir)}
   <style>
     body { font-family: var(--font-sans); color: var(--color-fg); background: var(--color-bg); margin: 0; padding: var(--space-6); max-width: 72rem; margin: 0 auto; }
     [data-part="page-header"] { margin-bottom: var(--space-6); }
@@ -583,17 +569,20 @@ export async function scaffold(args: string[]): Promise<void> {
     log.step("Ensured all required components are installed.");
   }
 
+  // Detect if bundle exists
+  const hasBundle = existsSync(join(cwd, config.output_dir, "loom.bundle.css"));
+
   // Generate the page
   let html: string;
   switch (name) {
     case "landing-page":
-      html = generateLandingPage(scaffoldDef.title);
+      html = generateLandingPage(scaffoldDef.title, hasBundle, config.output_dir);
       break;
     case "admin-dashboard":
-      html = generateAdminDashboard(scaffoldDef.title);
+      html = generateAdminDashboard(scaffoldDef.title, hasBundle, config.output_dir);
       break;
     case "internal-tool":
-      html = generateInternalTool(scaffoldDef.title);
+      html = generateInternalTool(scaffoldDef.title, hasBundle, config.output_dir);
       break;
     default:
       log.error(`No generator for scaffold '${name}'.`);

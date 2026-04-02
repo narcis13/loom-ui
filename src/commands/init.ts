@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { log } from "../utils/logger";
 import { configExists, writeConfig, DEFAULT_CONFIG, type LoomConfig } from "../utils/config";
 import { ensureDir, copyDir, copyFile, getRegistryPath } from "../utils/fs";
+import { generateBundle } from "../utils/bundler";
 
 interface InitOptions {
   theme: string;
@@ -223,6 +224,16 @@ export async function init(args: string[]): Promise<void> {
     }
   }
 
+  // 9. Generate initial CSS bundle (tokens + base + theme)
+  log.step("Generating CSS bundle...");
+  config.bundle = {
+    output: `${opts.dir}/loom.bundle.css`,
+    auto: true,
+    minify: false,
+  };
+  await writeConfig(config, cwd);
+  await generateBundle(cwd);
+
   log.blank();
   log.success("Loom project initialized!");
   log.blank();
@@ -235,9 +246,11 @@ export async function init(args: string[]): Promise<void> {
   log.step(`${opts.dir}/primitives/ — CSS-only components`);
   log.step(`${opts.dir}/recipes/   — interactive components`);
   log.step(`${opts.dir}/patterns/  — compositions`);
+  log.step(`${opts.dir}/loom.bundle.css — single CSS bundle`);
   log.blank();
   console.log("  Next steps:");
   log.step("loom add button card input   — add components");
   log.step("loom list                    — see available components");
+  log.step("loom dev                     — start dev server");
   log.step("loom doctor                  — check project health");
 }

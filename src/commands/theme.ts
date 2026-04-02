@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { log } from "../utils/logger";
 import { configExists, readConfig, writeConfig } from "../utils/config";
 import { copyFile, ensureDir, getRegistryPath } from "../utils/fs";
+import { generateBundle } from "../utils/bundler";
 
 function printHelp() {
   log.heading("loom theme <subcommand>");
@@ -85,6 +86,13 @@ async function themeSet(name: string): Promise<void> {
   // Update config
   config.theme = name;
   await writeConfig(config, cwd);
+
+  // Regenerate bundle if it exists
+  const bundlePath = join(outputDir, "loom.bundle.css");
+  if (config.bundle?.auto !== false && existsSync(bundlePath)) {
+    await generateBundle(cwd);
+    log.step("Bundle regenerated.");
+  }
 
   log.success(`Theme set to '${name}'.`);
   log.dim(`Theme file: ${config.output_dir}/tokens/theme.css`);
