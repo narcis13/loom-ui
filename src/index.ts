@@ -19,8 +19,7 @@ import { scaffold } from "./commands/scaffold";
 import { bundle } from "./commands/bundle";
 import { dev } from "./commands/dev";
 import { log } from "./utils/logger";
-
-const VERSION = "0.2.0";
+import { VERSION } from "./version";
 
 const COMMANDS: Record<string, (args: string[]) => Promise<void>> = {
   init,

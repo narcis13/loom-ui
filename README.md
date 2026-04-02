@@ -76,7 +76,7 @@ This makes Loom **agent-native**: AI coding agents can read manifests, generate 
 
 ```bash
 # Install globally (or use npx)
-bun install -g @loom-ui/cli
+npm install -g loom-ui-cli
 
 # Initialize a new project
 loom init
