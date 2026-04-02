@@ -26,6 +26,10 @@ export function getRegistryPath(): string {
   return join(import.meta.dir, "../../registry");
 }
 
+export function getPackageRoot(): string {
+  return join(import.meta.dir, "../..");
+}
+
 export function relativePath(from: string, to: string): string {
   return relative(from, to);
 }

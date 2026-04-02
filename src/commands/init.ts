@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { log } from "../utils/logger";
 import { configExists, writeConfig, DEFAULT_CONFIG, type LoomConfig } from "../utils/config";
-import { ensureDir, copyDir, copyFile, getRegistryPath } from "../utils/fs";
+import { ensureDir, copyDir, copyFile, getRegistryPath, getPackageRoot } from "../utils/fs";
 import { generateBundle } from "../utils/bundler";
 
 interface InitOptions {
@@ -210,7 +210,14 @@ export async function init(args: string[]): Promise<void> {
     ) + "\n"
   );
 
-  // 8. Add .loom/ to .gitignore if git repo
+  // 8. Copy README.md into .loom/
+  const readmeSrc = join(getPackageRoot(), "README.md");
+  if (existsSync(readmeSrc)) {
+    await copyFile(readmeSrc, join(loomDir, "README.md"));
+    log.step("Copied README.md into .loom/");
+  }
+
+  // Add .loom/ to .gitignore if git repo
   if (existsSync(join(cwd, ".git"))) {
     const gitignorePath = join(cwd, ".gitignore");
     let gitignore = "";
