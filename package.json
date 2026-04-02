@@ -1,6 +1,6 @@
 {
   "name": "loom-ui-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Agent-native UI framework — CLI-distributed, manifest-driven, zero-dependency components",
   "type": "module",
   "types": "./src/index.ts",
@@ -29,7 +29,16 @@
     "LICENSE",
     "bunfig.toml"
   ],
-  "keywords": ["ui", "framework", "cli", "components", "agent-native", "html", "css", "bun"],
+  "keywords": [
+    "ui",
+    "framework",
+    "cli",
+    "components",
+    "agent-native",
+    "html",
+    "css",
+    "bun"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
