@@ -38,19 +38,13 @@
   <link rel="stylesheet" href="../registry/primitives/empty-state/empty-state.css">
   <link rel="stylesheet" href="../registry/primitives/progress/progress.css">
 
-  <!-- Loom Core -->
+  <!-- Loom Core + Data Source -->
+  <script src="../registry/core/api-source.js"></script>
   <script src="../registry/core/loom-core.js" defer></script>
 </head>
 <body>
   <div l-cloak l-data="{
-    tasks: [
-      { id: 1, title: 'Design token audit', description: 'Review all palette tokens for WCAG contrast compliance', done: false, priority: 'high', category: 'design' },
-      { id: 2, title: 'Write manifest for date-picker', description: 'Define slots, variants, states, and a11y requirements', done: false, priority: 'medium', category: 'development' },
-      { id: 3, title: 'Update README examples', description: 'Replace class-based examples with data-attribute patterns', done: true, priority: 'low', category: 'documentation' },
-      { id: 4, title: 'Add combobox keyboard nav', description: 'Implement arrow key navigation and type-ahead search', done: false, priority: 'high', category: 'development' },
-      { id: 5, title: 'Repair engine edge cases', description: 'Handle nested component repair when parent is also broken', done: false, priority: 'medium', category: 'development' }
-    ],
-    nextId: 6,
+    ...apiSource('/api/tasks', { idKey: 'id', optimistic: true }),
     newTitle: '',
     newDescription: '',
     newPriority: 'medium',
@@ -59,10 +53,9 @@
     search: '',
     darkMode: false,
 
-    addTask() {
+    async addTask() {
       if (!this.newTitle.trim()) return;
-      this.tasks.push({
-        id: this.nextId++,
+      await this.create({
         title: this.newTitle.trim(),
         description: this.newDescription.trim(),
         done: false,
@@ -74,24 +67,28 @@
       this.newPriority = 'medium';
     },
 
-    removeTask(id) {
-      this.tasks = this.tasks.filter(t => t.id !== id);
+    async removeTask(id) {
+      await this.remove(id);
+    },
+
+    async toggleTask(task) {
+      await this.update(task.id, { done: !task.done });
     },
 
     get filteredTasks() {
-      let result = this.tasks;
+      let result = this.items;
       if (this.filter === 'active') result = result.filter(t => !t.done);
       if (this.filter === 'done') result = result.filter(t => t.done);
       if (this.search.trim()) {
         const q = this.search.toLowerCase();
-        result = result.filter(t => t.title.toLowerCase().includes(q) || t.description.toLowerCase().includes(q));
+        result = result.filter(t => t.title.toLowerCase().includes(q) || (t.description || '').toLowerCase().includes(q));
       }
       return result;
     },
 
     get stats() {
-      const total = this.tasks.length;
-      const done = this.tasks.filter(t => t.done).length;
+      const total = this.items.length;
+      const done = this.items.filter(t => t.done).length;
       return { total, done, active: total - done };
     },
 
@@ -99,7 +96,7 @@
       this.darkMode = !this.darkMode;
       document.documentElement.setAttribute('data-theme', this.darkMode ? 'dark' : 'light');
     }
-  }">
+  }" l-init="load()">
 
     <div data-ui="surface" data-variant="flat" data-max="lg" data-size="md">
       <div data-ui="stack" data-gap="6">
@@ -108,13 +105,37 @@
         <div data-ui="stack" data-variant="horizontal" data-gap="4" data-align="center" data-justify="between" data-responsive>
           <div data-ui="stack" data-gap="1">
             <h1 data-ui="heading" data-size="3">Task Manager</h1>
-            <p data-ui="text" data-size="sm" data-variant="muted">Manage your work with zero CSS classes</p>
+            <p data-ui="text" data-size="sm" data-variant="muted">Manage your work with zero CSS classes — powered by apiSource()</p>
           </div>
           <label data-ui="switch-label">
             <input data-ui="switch" type="checkbox" role="switch" @change="toggleDark()">
             <span data-ui="text" data-size="sm" l-text="darkMode ? 'Dark' : 'Light'"></span>
           </label>
         </div>
+
+        <!-- Loading state -->
+        <template l-if="loading">
+          <div data-ui="empty-state">
+            <span data-part="icon">&#x23F3;</span>
+            <h3 data-part="title">Loading tasks...</h3>
+            <p data-part="description">Fetching from server</p>
+          </div>
+        </template>
+
+        <!-- Error state -->
+        <template l-if="error">
+          <div data-ui="card" data-variant="destructive" data-size="sm">
+            <div data-part="body">
+              <div data-ui="stack" data-variant="horizontal" data-gap="3" data-align="center">
+                <span data-ui="text" data-variant="destructive" l-text="error"></span>
+                <button data-ui="button" data-variant="outline" data-size="sm" @click="load()">Retry</button>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Main content (only when loaded) -->
+        <template l-if="!loading && !error">
 
         <!-- Stats -->
         <div data-ui="grid" data-cols="3" data-gap="4">
@@ -182,7 +203,9 @@
                   <textarea data-ui="textarea" rows="2" placeholder="Optional description..." l-model="newDescription"></textarea>
                 </div>
                 <div>
-                  <button data-ui="button" data-variant="primary" type="submit">Add Task</button>
+                  <button data-ui="button" data-variant="primary" type="submit"
+                          :data-state="submitting ? 'disabled' : ''"
+                          l-text="submitting ? 'Adding...' : 'Add Task'"></button>
                 </div>
               </div>
             </form>
@@ -213,7 +236,7 @@
                 <div data-ui="stack" data-variant="horizontal" data-gap="3" data-align="start">
                   <!-- Checkbox -->
                   <label data-ui="checkbox-label">
-                    <input data-ui="checkbox" type="checkbox" l-model="task.done">
+                    <input data-ui="checkbox" type="checkbox" :checked="task.done" @change="toggleTask(task)">
                   </label>
 
                   <!-- Content -->
@@ -247,9 +270,11 @@
           </template>
         </div>
 
+        </template><!-- /l-if !loading && !error -->
+
         <!-- Footer -->
         <div data-ui="surface" data-variant="flat" data-size="md" data-align-text="center">
-          <p data-ui="text" data-size="xs" data-variant="subtle">Loom UI Task Manager — built with zero CSS classes</p>
+          <p data-ui="text" data-size="xs" data-variant="subtle">Loom UI Task Manager — powered by apiSource() data service layer</p>
         </div>
 
       </div>

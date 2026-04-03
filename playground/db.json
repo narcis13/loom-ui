@@ -1,0 +1,45 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Design token audit",
+      "description": "Review all palette tokens for WCAG contrast compliance",
+      "done": false,
+      "priority": "high",
+      "category": "design"
+    },
+    {
+      "id": 2,
+      "title": "Write manifest for date-picker",
+      "description": "Define slots, variants, states, and a11y requirements",
+      "done": true,
+      "priority": "medium",
+      "category": "development"
+    },
+    {
+      "id": 3,
+      "title": "Update README examples",
+      "description": "Replace class-based examples with data-attribute patterns",
+      "done": false,
+      "priority": "low",
+      "category": "documentation"
+    },
+    {
+      "id": 4,
+      "title": "Add combobox keyboard nav",
+      "description": "Implement arrow key navigation and type-ahead search",
+      "done": false,
+      "priority": "high",
+      "category": "development"
+    },
+    {
+      "id": 6,
+      "title": "Capata contur",
+      "description": "UI baby de cel mai inalt nivel",
+      "done": false,
+      "priority": "high",
+      "category": "documentation"
+    }
+  ],
+  "nextId": 7
+}
