@@ -31,6 +31,7 @@ The CLI is the conductor.
 - [CSS Bundle](#css-bundle)
 - [Audit and Repair](#audit-and-repair)
 - [Scaffolding and Code Generation](#scaffolding-and-code-generation)
+- [Data-Driven Rendering](#data-driven-rendering)
 - [AI Agent Integration](#ai-agent-integration)
 - [CSS Conventions](#css-conventions)
 - [Project Structure](#project-structure)
@@ -622,6 +623,148 @@ The engine scans for `[data-ui]` elements matching known recipes, calls their fa
 
 ---
 
+## Data-Driven Rendering
+
+Loom ships with `apiSource()` — a thin data service layer that connects `l-data` scopes to REST endpoints. It's application-level code (not a Loom controller), so it lives outside the `no-fetch` audit boundary.
+
+### Include
+
+```html
+<script src="ui/core/api-source.js"></script>
+<script src="ui/core/loom-core.js" defer></script>
+```
+
+### The `apiSource()` Factory
+
+```js
+apiSource(endpoint, options?)
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `idKey` | `"id"` | Primary key field name |
+| `pollInterval` | `0` | Auto-refresh interval in ms (0 = off) |
+| `optimistic` | `true` | Update UI before server confirms |
+
+Returns an object meant to be spread into `l-data`:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `items` | `Array` | Fetched data |
+| `loading` | `boolean` | True during initial fetch |
+| `submitting` | `boolean` | True during a mutation |
+| `error` | `string\|null` | Error message or null |
+| `load()` | `async` | GET — fetch all items |
+| `create(payload)` | `async` | POST — create new item |
+| `update(id, payload)` | `async` | PATCH — update item by id |
+| `remove(id)` | `async` | DELETE — remove item by id |
+| `startPolling(ms?)` | — | Start auto-refresh |
+| `stopPolling()` | — | Stop auto-refresh |
+| `refresh()` | `async` | Alias for `load()` |
+
+### Usage
+
+Spread `apiSource()` into any `l-data` scope and call `load()` on init:
+
+```html
+<div l-data="{
+       ...apiSource('/api/tasks', { idKey: 'id', optimistic: true }),
+       newTitle: ''
+     }"
+     l-init="load()">
+
+  <!-- Loading state -->
+  <template l-if="loading">
+    <div data-ui="spinner" data-size="sm"></div>
+  </template>
+
+  <!-- Error state -->
+  <template l-if="error">
+    <span data-ui="text" data-variant="destructive" l-text="error"></span>
+    <button data-ui="button" data-size="sm" @click="load()">Retry</button>
+  </template>
+
+  <!-- Data-driven list -->
+  <template l-if="!loading && !error">
+    <template l-for="task in items">
+      <div data-ui="card" data-size="sm">
+        <div data-part="body">
+          <span l-text="task.title"></span>
+          <button data-ui="button" data-variant="ghost" data-size="sm"
+                  @click="remove(task.id)">Delete</button>
+        </div>
+      </div>
+    </template>
+  </template>
+
+  <!-- Create -->
+  <form @submit.prevent="create({ title: newTitle }).then(() => newTitle = '')">
+    <input data-ui="input" l-model="newTitle" placeholder="New task...">
+    <button data-ui="button" data-variant="primary">Add</button>
+  </form>
+</div>
+```
+
+### Optimistic Updates
+
+When `optimistic: true` (default), the UI updates immediately before the server responds. If the server request fails, the change is rolled back automatically. This makes CRUD operations feel instant.
+
+### Polling
+
+```html
+<div l-data="{ ...apiSource('/api/notifications', { pollInterval: 15000 }) }"
+     l-init="load(); startPolling()">
+  <template l-for="notif in items">
+    <span l-text="notif.message"></span>
+  </template>
+</div>
+```
+
+### Multiple Sources
+
+Each `apiSource()` call is independent — different endpoints, different state:
+
+```html
+<script>
+  const menuSource  = apiSource('/api/menus');
+  const userSource  = apiSource('/api/users', { optimistic: false });
+</script>
+
+<div l-data="{ ...menuSource }" l-init="load()">
+  <template l-for="menu in items">
+    <span l-text="menu.name"></span>
+  </template>
+</div>
+
+<div l-data="{ ...userSource }" l-init="load()">
+  <template l-for="user in items">
+    <span l-text="user.email"></span>
+  </template>
+</div>
+```
+
+### Boundary Rules
+
+- `apiSource()` is **application code** — lives in a `<script>` tag or a shared `.js` file
+- Loom **recipe controllers** never call `fetch` — the `no-fetch` audit rule still applies to them
+- The `l-data` / `l-init` / `l-for` directives bridge data to DOM
+- Error and loading states use standard Loom components (spinner, card, empty-state)
+
+### Dev Server
+
+A Bun-based dev server is included for testing data-driven pages:
+
+```bash
+bun playground/server.js
+# Serves on http://localhost:5555
+# API: GET/POST /api/tasks, GET/PATCH/DELETE /api/tasks/:id
+# Static: serves playground/ and registry/ files
+```
+
+See `playground/task-manager.html` for a full CRUD example using `apiSource()`.
+
+---
+
 ## CLI Reference
 
 The CLI is organized into five categories. Run `loom help` for the full list or `loom <command> --help` for options.
@@ -969,14 +1112,14 @@ loom-ui/
 ├── registry/                 Component library (shipped with CLI)
 │   ├── tokens/               8 CSS token files
 │   ├── base/                 reset.css, prose.css
-│   ├── core/                 loom-core.js + utility modules
+│   ├── core/                 loom-core.js, api-source.js + utility modules
 │   ├── themes/               4 built-in themes
 │   ├── primitives/           22 CSS-only components
 │   ├── recipes/              15 CSS+JS interactive components
 │   └── patterns/             6 page-level compositions
 │
 ├── tests/                    Bun test suite (462 tests)
-├── playground/               6 example pages
+├── playground/               6 example pages + dev server (server.js, db.json)
 ├── package.json
 ├── tsconfig.json
 └── loom.config.json          (generated per-project)

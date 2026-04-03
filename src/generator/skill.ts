@@ -36,6 +36,27 @@ export async function generateSkill(cwd: string): Promise<string> {
   lines.push("- Never use `!important` in component CSS");
   lines.push("");
 
+  // Data-driven rendering
+  lines.push("## Data-Driven Rendering");
+  lines.push("");
+  lines.push("Include `<script src=\"" + config.output_dir + "/core/api-source.js\"></script>` before loom-core.js to use `apiSource()`.");
+  lines.push("");
+  lines.push("```html");
+  lines.push("<div l-data=\"{ ...apiSource('/api/items', { idKey: 'id', optimistic: true }), newName: '' }\"");
+  lines.push("     l-init=\"load()\">");
+  lines.push("  <template l-for=\"item in items\"><span l-text=\"item.name\"></span></template>");
+  lines.push("  <form @submit.prevent=\"create({ name: newName }).then(() => newName = '')\">");
+  lines.push("    <input data-ui=\"input\" l-model=\"newName\">");
+  lines.push("    <button data-ui=\"button\" data-variant=\"primary\">Add</button>");
+  lines.push("  </form>");
+  lines.push("</div>");
+  lines.push("```");
+  lines.push("");
+  lines.push("Methods: `load()`, `create(payload)`, `update(id, payload)`, `remove(id)`, `startPolling(ms)`, `stopPolling()`");
+  lines.push("State: `items` (array), `loading`, `submitting`, `error`");
+  lines.push("Note: `apiSource()` is application code — recipe controllers still never call fetch.");
+  lines.push("");
+
   if (config.installed.recipes.length > 0) {
     lines.push("## Recipe Controllers");
     lines.push("");

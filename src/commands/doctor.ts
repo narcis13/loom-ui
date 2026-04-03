@@ -151,7 +151,19 @@ export async function doctor(args: string[]): Promise<void> {
   if (config.include_core) {
     const coreDir = join(outputDir, "core");
     if (existsSync(coreDir)) {
-      results.push({ name: "Core modules", passed: true, message: "Directory exists" });
+      const coreFiles = ["loom-core.js", "api-source.js"];
+      const missingCore = coreFiles.filter(
+        (f) => !existsSync(join(coreDir, f))
+      );
+      if (missingCore.length === 0) {
+        results.push({ name: "Core modules", passed: true, message: "loom-core.js + api-source.js present" });
+      } else {
+        results.push({
+          name: "Core modules",
+          passed: false,
+          message: `Missing: ${missingCore.join(", ")}. Run 'loom init' to restore.`,
+        });
+      }
     } else {
       results.push({
         name: "Core modules",

@@ -1,6 +1,6 @@
 ---
 name: loom-creator
-description: Expert agent for the Loom UI framework — generates, audits, repairs, and explains zero-class, manifest-driven UI components and pages. Use when building HTML pages or components with Loom UI, when the user asks to create/modify/audit Loom UI markup, when working with data-ui/data-part/data-variant/data-state attributes, when generating page layouts using Loom tokens and primitives, or when creating new registry components (primitives, recipes, patterns). Triggers on any Loom UI task including component creation, page scaffolding, code auditing, token usage, reactive directive usage (l-data, l-model, l-for), and CLI operations.
+description: Expert agent for the Loom UI framework — generates, audits, repairs, and explains zero-class, manifest-driven UI components and pages. Use when building HTML pages or components with Loom UI, when the user asks to create/modify/audit Loom UI markup, when working with data-ui/data-part/data-variant/data-state attributes, when generating page layouts using Loom tokens and primitives, when creating new registry components (primitives, recipes, patterns), or when connecting pages to server data via apiSource(). Triggers on any Loom UI task including component creation, page scaffolding, code auditing, token usage, reactive directive usage (l-data, l-model, l-for), data-driven rendering with apiSource(), and CLI operations.
 ---
 
 # Loom Creator
@@ -77,6 +77,8 @@ Always follow this structure for full pages:
   <!-- Single CSS bundle (replaces 40+ individual link tags) -->
   <link rel="stylesheet" href="ui/loom.bundle.css">
 
+  <!-- Data Source (include BEFORE loom-core when using apiSource) -->
+  <script src="ui/core/api-source.js"></script>
   <!-- Loom Core (reactive directives + recipe auto-init) -->
   <script src="ui/core/loom-core.js" defer></script>
 </head>
@@ -200,6 +202,91 @@ loom explain <component> [--json]    # human/agent-readable explanation
 ```
 
 Themes: `default`, `midnight`, `paper`, `brutalist`.
+
+## Data-Driven Rendering with `apiSource()`
+
+Loom includes `api-source.js` — a data service layer for connecting `l-data` scopes to REST APIs. Include it before `loom-core.js`:
+
+```html
+<script src="ui/core/api-source.js"></script>
+<script src="ui/core/loom-core.js" defer></script>
+```
+
+### `apiSource(endpoint, options?)` Factory
+
+Returns an object to spread into `l-data`. Options: `idKey` (default `"id"`), `pollInterval` (default `0`), `optimistic` (default `true`).
+
+**Injected state:** `items` (array), `loading` (bool), `submitting` (bool), `error` (string|null)
+**CRUD methods:** `load()`, `create(payload)`, `update(id, payload)`, `remove(id)`
+**Polling:** `startPolling(ms?)`, `stopPolling()`
+
+### Pattern: Server-Backed CRUD Page
+
+```html
+<div l-data="{
+       ...apiSource('/api/tasks', { idKey: 'id', optimistic: true }),
+       newTitle: '',
+       filter: 'all',
+
+       get filtered() {
+         if (this.filter === 'all') return this.items;
+         if (this.filter === 'done') return this.items.filter(t => t.done);
+         return this.items.filter(t => !t.done);
+       }
+     }"
+     l-init="load()">
+
+  <!-- Loading -->
+  <template l-if="loading">
+    <div data-ui="spinner" data-size="sm"></div>
+  </template>
+
+  <!-- Error with retry -->
+  <template l-if="error">
+    <span data-ui="text" data-variant="destructive" l-text="error"></span>
+    <button data-ui="button" data-size="sm" @click="load()">Retry</button>
+  </template>
+
+  <!-- Data list -->
+  <template l-if="!loading && !error">
+    <template l-for="task in filtered">
+      <div data-ui="card" data-size="sm">
+        <div data-part="body">
+          <input data-ui="checkbox" type="checkbox"
+                 :checked="task.done"
+                 @change="update(task.id, { done: !task.done })">
+          <span l-text="task.title"></span>
+          <button data-ui="button" data-variant="ghost" data-size="sm"
+                  @click="remove(task.id)">Delete</button>
+        </div>
+      </div>
+    </template>
+  </template>
+
+  <!-- Create form -->
+  <form @submit.prevent="create({ title: newTitle, done: false }).then(() => newTitle = '')">
+    <input data-ui="input" l-model="newTitle" placeholder="New task..." required>
+    <button data-ui="button" data-variant="primary"
+            :data-state="submitting ? 'disabled' : ''"
+            l-text="submitting ? 'Adding...' : 'Add'"></button>
+  </form>
+</div>
+```
+
+### Boundary Rules
+
+- `apiSource()` is **application code** — not a Loom recipe controller
+- Recipe controllers still **never call fetch** — the `no-fetch` audit rule applies only to them
+- Use standard Loom components for loading/error states (spinner, card, empty-state)
+- Multiple independent sources: spread separate `apiSource()` calls into separate `l-data` scopes
+
+### Dev Server for Testing
+
+```bash
+bun playground/server.js    # Port 5555 — serves API + static files
+```
+
+See `playground/task-manager.html` for the full working example.
 
 ## Strict Rules
 

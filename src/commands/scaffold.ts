@@ -360,6 +360,7 @@ ${cssLinks(components, hasBundle, outputDir)}
     </main>
   </div>
 
+  <script src="ui/core/api-source.js"></script>
   <script type="module" src="ui/core/loom.js"></script>
 </body>
 </html>`;
@@ -516,6 +517,7 @@ ${cssLinks(components, hasBundle, outputDir)}
     <button data-ui="button" data-variant="primary">Save Changes</button>
   </div>
 
+  <script src="ui/core/api-source.js"></script>
   <script type="module" src="ui/core/loom.js"></script>
 </body>
 </html>`;

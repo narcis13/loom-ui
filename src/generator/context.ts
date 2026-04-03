@@ -187,6 +187,7 @@ export async function generateContext(cwd: string): Promise<ContextData> {
       always_aria_labelledby_on_dialog_panel: true,
       semantic_html_over_div_soup: true,
       tokens_only_no_hardcoded_values: true,
+      api_source_is_app_code_not_controller: true,
     },
   };
 }
@@ -230,6 +231,17 @@ export function formatContextMarkdown(data: ContextData): string {
   lines.push(`- Radius: ${Object.entries(data.tokens.radius).map(([k, v]) => `${k}=${v}`).join(", ")}`);
   lines.push(`- Shadows: ${data.tokens.shadows}`);
   lines.push(`- Z-index: ${data.tokens.z_index}`);
+  lines.push("");
+
+  // Data Service
+  lines.push("## Data-Driven Rendering");
+  lines.push("");
+  lines.push("Include `core/api-source.js` before `core/loom-core.js` to use `apiSource()`.");
+  lines.push("Spread into `l-data` for server-backed CRUD: `l-data=\"{ ...apiSource('/api/items'), newName: '' }\" l-init=\"load()\"`");
+  lines.push("Methods: `load()`, `create(payload)`, `update(id, payload)`, `remove(id)`, `startPolling(ms)`, `stopPolling()`");
+  lines.push("State: `items` (array), `loading`, `submitting`, `error`");
+  lines.push("Options: `apiSource(url, { idKey: 'id', pollInterval: 0, optimistic: true })`");
+  lines.push("Note: `apiSource()` is application code — recipe controllers still never call fetch.");
   lines.push("");
 
   // Components
@@ -307,6 +319,16 @@ export function formatContextCursorRules(data: ContextData): string {
   lines.push("- Always use CSS custom property tokens (`var(--color-primary)`) — never hardcode values");
   lines.push("- Always include required ARIA attributes per component manifest");
   lines.push("- Dark theme: `data-theme=\"dark\"` on `<html>` element");
+  lines.push("");
+
+  lines.push("## Data-Driven Rendering");
+  lines.push("");
+  lines.push("- Include `<script src=\"ui/core/api-source.js\"></script>` before loom-core.js");
+  lines.push("- Use `apiSource(endpoint, options?)` to create server-backed data sources");
+  lines.push("- Spread into `l-data`: `l-data=\"{ ...apiSource('/api/items') }\" l-init=\"load()\"`");
+  lines.push("- CRUD methods: `load()`, `create(payload)`, `update(id, payload)`, `remove(id)`");
+  lines.push("- State: `items`, `loading`, `submitting`, `error`");
+  lines.push("- `apiSource()` is application code, NOT a recipe controller — no-fetch rule doesn't apply");
   lines.push("");
 
   lines.push("## Available Components");
