@@ -1079,10 +1079,24 @@
 
     } else if (tag === 'input' && type === 'checkbox') {
       var cl = effect(function() {
-        el.checked = !!evaluate(prop, scope, el);
+        var current = evaluate(prop, scope, el);
+        if (Array.isArray(current)) {
+          el.checked = current.indexOf(el.value) >= 0;
+        } else {
+          el.checked = !!current;
+        }
       });
       el.addEventListener('change', function() {
-        evaluateAssignment(prop + ' = ' + el.checked, scope, el);
+        var current = evaluate(prop, scope, el);
+        if (Array.isArray(current)) {
+          var arr = current.slice();
+          var idx = arr.indexOf(el.value);
+          if (el.checked && idx < 0) arr.push(el.value);
+          else if (!el.checked && idx >= 0) arr.splice(idx, 1);
+          evaluateAssignment(prop + ' = ' + JSON.stringify(arr), scope, el);
+        } else {
+          evaluateAssignment(prop + ' = ' + el.checked, scope, el);
+        }
       });
       addCleanup(el, cl);
 

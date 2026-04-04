@@ -595,6 +595,59 @@ describe("Directives", () => {
       expect(document.querySelector("span")!.textContent).toBe("true");
     });
 
+    it("checkbox array mode — adds/removes values", async () => {
+      document.body.innerHTML = `
+        <div l-data='{ "tags": [] }'>
+          <input type="checkbox" value="a" l-model="tags" />
+          <input type="checkbox" value="b" l-model="tags" />
+          <input type="checkbox" value="c" l-model="tags" />
+          <span l-text="tags.join(',')"></span>
+        </div>
+      `;
+      Loom.start();
+      await tick();
+
+      const boxes = document.querySelectorAll("input[type='checkbox']") as NodeListOf<HTMLInputElement>;
+      expect(boxes[0].checked).toBe(false);
+      expect(boxes[1].checked).toBe(false);
+      expect(boxes[2].checked).toBe(false);
+
+      // Check "a"
+      boxes[0].checked = true;
+      boxes[0].dispatchEvent(new Event("change", { bubbles: true }));
+      await tick();
+      expect(document.querySelector("span")!.textContent).toBe("a");
+
+      // Check "c"
+      boxes[2].checked = true;
+      boxes[2].dispatchEvent(new Event("change", { bubbles: true }));
+      await tick();
+      expect(document.querySelector("span")!.textContent).toBe("a,c");
+
+      // Uncheck "a"
+      boxes[0].checked = false;
+      boxes[0].dispatchEvent(new Event("change", { bubbles: true }));
+      await tick();
+      expect(document.querySelector("span")!.textContent).toBe("c");
+    });
+
+    it("checkbox array mode — reflects pre-populated array", async () => {
+      document.body.innerHTML = `
+        <div l-data='{ "tags": ["b", "c"] }'>
+          <input type="checkbox" value="a" l-model="tags" />
+          <input type="checkbox" value="b" l-model="tags" />
+          <input type="checkbox" value="c" l-model="tags" />
+        </div>
+      `;
+      Loom.start();
+      await tick();
+
+      const boxes = document.querySelectorAll("input[type='checkbox']") as NodeListOf<HTMLInputElement>;
+      expect(boxes[0].checked).toBe(false);
+      expect(boxes[1].checked).toBe(true);
+      expect(boxes[2].checked).toBe(true);
+    });
+
     it("two-way binds select", async () => {
       document.body.innerHTML = `
         <div l-data="{ color: 'red' }">
